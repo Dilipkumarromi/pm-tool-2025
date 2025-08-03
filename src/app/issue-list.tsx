@@ -1,82 +1,71 @@
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import React from "react";
+import { IconTimeDuration0 } from "@tabler/icons-react";
+import moment from "moment";
 export function TableDemo() {
-  const data=[
-    {
-      id: 1,
-      title: "Issue 1",
-      description: "Description of issue 1",
+  const data = [
+   {
+      id: 4,
+      title: "Connect your tools",
+      description: "(3)",
       status: "Open",
       priority: "High",
-      createdAt: "2023-10-01",
+      createdAt: moment("2023-07-25").format("MMM Do YY"),
+      icon:[
+        {
+          name: "filter",
+          icon: <IconTimeDuration0 />,
+          onClick: () => console.log("Filter clicked"),
+        }
+      ]
     },
-    {
-      id: 2,
-      title: "Issue 2",
-      description: "Description of issue 2",
-      status: "In Progress",
-      priority: "Medium",
-      createdAt: "2023-10-02",
-    },
-    {
-      id: 3,
-      title: "Issue 3",
-      description: "Description of issue 3",
-      status: "Closed",
-      priority: "Low",
-      createdAt: "2023-10-03",
-    },
-  ]
+  ];
+
   return (
-    <>
-    {/* <div className="flex flex-col w-full">
-      <span className="bg-gray-400 text-white p-1 w-full h-[30px]">Todo 4</span>
-      <ul className="flex flex-col space-y-2 w-full m-2">
-      {data.map((issue) => (
-      <li key={issue.id} className="flex flex-col w-full">
-      <span className="font-bold mr-0">{issue.title}</span>
-      <ul className="flex flex-col space-y-1 pl-4">
-        <li>Status: {issue.status}</li>
-        <li>Priority: {issue.priority}</li>
-        <li>Created At: {issue.createdAt}</li>
-        <li>Description: {issue.description}</li>
-      </ul>
-      </li>
-      ))}
-      </ul>
-    </div> */}
-    <Table className="w-full">
-      <TableCaption>A list of your recent issues.</TableCaption>
-      <TableHeader>
-      <TableRow>
-        <TableHead className="w-[100px]">Title</TableHead>
-        <TableHead>Status</TableHead>
-        <TableHead>Priority</TableHead>
-        <TableHead>Created At</TableHead>
-        <TableHead>Description</TableHead>
-      </TableRow>
-      </TableHeader>
-      <TableBody>
-      {data.map((issue) => (
-        <TableRow key={issue.id}>
-        <TableCell className="font-medium">{issue.title}</TableCell>
-        <TableCell>{issue.status}</TableCell>
-        <TableCell>{issue.priority}</TableCell>
-        <TableCell>{issue.createdAt}</TableCell>
-        <TableCell>{issue.description}</TableCell>
-        </TableRow>
-      ))}
-      </TableBody>
-    </Table>
-   
-    </>
-  )
+    <div className="bg-white shadow-md rounded-md">
+      {/* Header */}
+      <div className="flex items-center justify-between p-2 border-b">
+        <h1 className="text-sm font-bold">Todo</h1>
+        <button className="text-sm text-gray-500 hover:text-gray-700 flex items-center">
+          <span className="material-icons">filter_list</span> Filter
+        </button>
+      </div>
+
+      {/* Table */}
+      <div className="p-2">
+        <ul className="space-y-1">
+          {data.map((issue) => (
+            <li
+              key={issue.id}
+              className="flex items-center justify-between  p-1 hover:bg-gray-100"
+            >
+              <div className="flex items-center space-x-4 text-sm">
+                <span className="text-gray-500">STU-{issue.id}</span>
+                <span className="text-gray-800">{issue.title}</span>
+                <span className="text-gray-500">{issue.description}</span>
+              </div>
+              <div className="flex items-center space-x-1 text-gray-500">
+                {
+                  issue.icon.map((iconItem, index) => (
+                    <button
+                      key={index}
+                      onClick={iconItem.onClick}
+                      className="text-gray-500 hover:text-gray-700"
+                      title={iconItem.name}
+                    >
+                      {iconItem.icon}
+                    </button>
+                  ))
+                }
+             
+                <span className="text-sm text-gray-500">
+                  
+                  {issue.createdAt}</span>
+                 
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
 }
