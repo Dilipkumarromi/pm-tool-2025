@@ -4,6 +4,8 @@ import { IconChevronDown } from "@tabler/icons-react";
 import { IconChevronCompactRight } from "@tabler/icons-react";
 import { IconCircle } from "@tabler/icons-react";
 import moment from "moment";
+import Dropdown from "../components/all-dropdown";
+import { IconCheck, IconX } from "@tabler/icons-react";
 
 export function TableDemo() {
   const [dropdownVisible,setDropdownVisible]=useState(true);
@@ -84,6 +86,14 @@ export function TableDemo() {
       ],
     },
   ];
+  const statusOptions = [
+    { id: 1, label: "Backlog", icon: <IconCircle size={16} /> },
+    { id: 2, label: "Todo", icon: <IconCircle size={16} /> },
+    { id: 3, label: "In Progress", icon: <IconCircle size={16} /> },
+    { id: 4, label: "Done", icon: <IconCheck size={16} /> },
+    { id: 5, label: "Canceled", icon: <IconX size={16} /> },
+    { id: 6, label: "Duplicate", icon: <IconX size={16} /> },
+  ];
 
   return (
     <div className="bg-white shadow-md rounded-md">
@@ -122,7 +132,7 @@ export function TableDemo() {
             {data.map((issue,index) => (
               <li
                 key={index}
-                className="flex  justify-between p-1 hover:bg-gray-100"
+                className="flex justify-between p-1 hover:bg-gray-100"
               >
                 <div className="flex space-x-2 text-sm">
                 <span className="text-gray-500">---</span>

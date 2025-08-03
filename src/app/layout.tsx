@@ -46,7 +46,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   title="All issue"
                   className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
                   >
-                  <IconCopy /> All issue
+                  <IconCopy size={17}/> All issue
                   </Button>
                   <Button
                   variant="outline"
