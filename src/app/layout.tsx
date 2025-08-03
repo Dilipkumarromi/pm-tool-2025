@@ -29,61 +29,61 @@ export const metadata: Metadata = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} global-styles data-new-gr-c-s-check-loaded="14.1246.0"
--                       data-gr-ext-installed=""` }
-      >
+<body
+  className={`${geistSans.variable} ${geistMono.variable} global-styles`}
+>
         <SidebarProvider>
           <AppSidebar />
-          <main>
+          <main className="w-full">
             <header className="bg-background sticky top-0 flex h-12 shrink-0 items-center gap-2 border-b px-4">
               <SidebarTrigger className="-ml-1" />
-              <div className="flex justify-between items-center w-full">
-                <div className="p-1 mr-5 gap-2 flex">
+                <div className="flex justify-between items-center w-full">
+                {/* float left */}
+                <div className="float-right p-1 ml-5 gap-2 flex">
                   <Button
-                    variant="outline"
-                    size="sm"
-                    title="All issue"
-                    className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+                  variant="outline"
+                  size="sm"
+                  title="All issue"
+                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
                   >
-                    <IconCopy /> All issue
+                  <IconCopy /> All issue
                   </Button>
                   <Button
-                    variant="outline"
-                    size="sm"
-                    title="Action"
-                    className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+                  variant="outline"
+                  size="sm"
+                  title="Action"
+                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
                   >
-                    <IconPercentage60 /> Action
+                  <IconPercentage60 /> Action
                   </Button>
                   <Button
-                    variant="outline"
-                    size="sm"
-                    title="Backlogs"
-                    className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+                  variant="outline"
+                  size="sm"
+                  title="Backlogs"
+                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
                   >
-                    <IconForbidFilled /> Backlogs
-                  </Button>
-                </div>
-                <div className="p-1 mr-5 gap-2 flex">
-                  <Button
-                    variant="outline"
-                    title="Filter"
-                    className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-                  >
-                    <IconFilter2 />
-              
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    title="Action"
-                    className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-                  >
-                    <IconAdjustmentsHorizontal /> Display
+                  <IconForbidFilled /> Backlogs
                   </Button>
                 </div>
-              </div>
+                {/* float right */}
+                <div className="float-left p-1 mr-5 gap-2 flex">
+                  <Button
+                  variant="outline"
+                  title="Filter"
+                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+                  >
+                  <IconFilter2 />
+                  </Button>
+                  <Button
+                  variant="outline"
+                  size="sm"
+                  title="Display"
+                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+                  >
+                  <IconAdjustmentsHorizontal /> Display
+                  </Button>
+                </div>
+                </div>
             </header>
 
             {children}

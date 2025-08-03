@@ -821,6 +821,14 @@
     z-index: 50;
   }
 
+  .float-left {
+    float: left;
+  }
+
+  .float-right {
+    float: right;
+  }
+
   .m-0 {
     margin: calc(var(--spacing) * 0);
   }
@@ -871,6 +879,10 @@
 
   .-ml-1 {
     margin-left: calc(var(--spacing) * -1);
+  }
+
+  .ml-5 {
+    margin-left: calc(var(--spacing) * 5);
   }
 
   .ml-auto {
@@ -1193,6 +1205,10 @@
 
   .justify-center {
     justify-content: center;
+  }
+
+  .justify-end {
+    justify-content: flex-end;
   }
 
   .gap-1 {

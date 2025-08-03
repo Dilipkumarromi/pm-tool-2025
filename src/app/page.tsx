@@ -12,14 +12,15 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { SidebarContent } from "@/components/ui/sidebar";
+import { TableDemo } from "./issue-list";
  
  
 const IssueDetailPage: React.FC = () => {
   return (
     <>
-      <SidebarContent className="flex flex-1 flex-col gap-4 p-4">
+      <SidebarContent>
+      <TableDemo/>
       
-       
       </SidebarContent>
     </>
   );
