@@ -1,3 +1,42 @@
- <div className="flex flex-col w-screen h-screen m-0 p-4 gap-4">
-      <TableDemo />
+<div className="bg-white shadow-md rounded-md">
+      {/* Header */}
+      <div className="flex items-center justify-between p-2 border-b">
+      <span className="material-icons mr-3"></span> 
+        <h1 className="text-sm font-bold">Todo</h1>
+        <button className="text-sm text-gray-500 hover:text-gray-700 flex items-center">
+          <span className="material-icons mr-3">+</span> 
+        </button>
+      </div>
+
+      {/* Table */}
+      <div className="p-2">
+        <ul className="space-y-1">
+          {data.map((issue) => (
+            <li
+              key={issue.id}
+              className="flex items-center justify-between  p-1 hover:bg-gray-100"
+            >
+              <div className="flex items-center space-x-4 text-sm">
+                <span className="text-gray-500">STU-{issue.id}</span>
+                <span className="text-gray-800">{issue.title}</span>
+                <span className="text-gray-500">{issue.description}</span>
+              </div>
+              <div className="flex items-center space-x-1 text-gray-500">
+                {issue.icon.map((iconItem, index) => (
+                  <button
+                    key={index}
+                    onClick={iconItem.onClick}
+                    className="text-gray-500 hover:text-gray-700"
+                    title={iconItem.name}
+                  >
+                    {iconItem.icon}
+                  </button>
+                ))}
+
+                <span className="text-sm text-gray-500">{issue.createdAt}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
