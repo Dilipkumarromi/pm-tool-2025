@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 6, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
+    {"offset": {"line": 18, "column": 0}, "map": {"version":3,"sources":["file:///Users/dilipkumarromi/ProjectMananger2/src/app/dashboard/page.tsx"],"sourcesContent":["import { AppSidebar } from \"@/components/app-sidebar\"\nimport {\n  Breadcrumb,\n  BreadcrumbItem,\n  BreadcrumbLink,\n  BreadcrumbList,\n  BreadcrumbPage,\n  BreadcrumbSeparator,\n} from \"@/components/ui/breadcrumb\"\nimport { Separator } from \"@/components/ui/separator\"\nimport {\n  SidebarInset,\n  SidebarProvider,\n  SidebarTrigger,\n} from \"@/components/ui/sidebar\"\n\nexport default function Page() {\n  return (\n    <SidebarProvider>\n      {/* <AppSidebar /> */}\n      <SidebarInset>\n       \n        <div className=\"flex flex-1 flex-col gap-4 p-4\">\n          {Array.from({ length: 24 }).map((_, index) => (\n            <div\n              key={index}\n              className=\"bg-muted/50 aspect-video h-12 w-full rounded-lg\"\n            />\n          ))}\n        </div>\n      </SidebarInset>\n    </SidebarProvider>\n  )\n}\n"],"names":[],"mappings":";;;;AAUA;;;AAMe,SAAS;IACtB,qBACE,8OAAC,mIAAA,CAAA,kBAAe;kBAEd,cAAA,8OAAC,mIAAA,CAAA,eAAY;sBAEX,cAAA,8OAAC;gBAAI,WAAU;0BACZ,MAAM,IAAI,CAAC;oBAAE,QAAQ;gBAAG,GAAG,GAAG,CAAC,CAAC,GAAG,sBAClC,8OAAC;wBAEC,WAAU;uBADL;;;;;;;;;;;;;;;;;;;;AAQnB","debugId":null}}]
+}

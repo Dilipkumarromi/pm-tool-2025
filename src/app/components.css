@@ -1,0 +1,773 @@
+body {
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-light);
+    color: var(--text-primary);
+    font-size: 12px; /* Base font size */
+    line-height: 1.5;
+  }
+  
+  .app-container {
+    display: flex;
+    min-height: 100vh;
+    overflow: hidden; /* Prevent horizontal scroll on mobile when sidebar is open */
+  }
+  
+  /* Sidebar Styling */
+  .sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-light);
+    padding: 16px 0;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0; /* Prevent sidebar from shrinking */
+  }
+  
+  .sidebar-header {
+    font-size: 1.1em; /* Matches screenshot */
+    font-weight: 600; /* Semibold */
+    color: var(--text-primary);
+    padding: 10px 20px 15px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  .sidebar-header .fa-chevron-down {
+    font-size: 0.7em;
+    margin-left: 8px;
+    color: var(--text-secondary);
+  }
+  
+  .sidebar-nav {
+    flex-grow: 1; /* Allows nav to take available space */
+    overflow-y: auto; /* Enable scrolling for navigation if content exceeds height */
+    padding-bottom: 20px;
+  }
+  
+  .sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .sidebar-nav li {
+    padding: 8px 20px;
+    color: var(--text-sidebar-light);
+    font-size: 0.9em; /* Slightly smaller for nav items */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .sidebar-nav li:hover:not(.selected):not(.collapsible-header) {
+    background-color: var(--button-bg-light);
+  }
+  
+  .sidebar-nav li.selected {
+    background-color: var(--accent-blue);
+    color: #fff;
+    border-radius: var(--border-radius-sm);
+    margin: 0 10px; /* Indent selected item visually */
+    padding: 8px 15px; /* Adjust padding for visual alignment after margin */
+  }
+  
+  /* Specific styling for nested menus (Workspace, Your Teams) */
+  .nav-section {
+    margin-top: 15px;
+  }
+  
+  .nav-section-header {
+    font-size: 0.85em; /* Smaller, matches screenshot */
+    font-weight: 500;
+    color: var(--text-secondary); /* Muted color */
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none; /* Prevent text selection on click */
+  }
+  
+  .nav-section-header .toggle-icon {
+    font-size: 0.7em;
+    transition: transform 0.2s ease-in-out;
+  }
+  .nav-section-header.active .toggle-icon {
+    transform: rotate(180deg);
+  }
+  
+  .nav-section-menu {
+    padding-top: 5px;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+  }
+  .nav-section-menu.active {
+    max-height: 500px; /* Arbitrary large value to allow content to show */
+    opacity: 1;
+  }
+  
+  .nav-sub-menu {
+    padding-left: 20px !important; /* Deeper indent for sub-sub items */
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+  }
+  .nav-sub-menu.active {
+    max-height: 500px; /* Arbitrary large value */
+    opacity: 1;
+  }
+  .nav-sub-menu li {
+    padding: 6px 0; /* Less vertical padding for sub-sub items */
+  }
+  .nav-sub-menu li.selected {
+    margin: 0; /* Remove margin for nested selected item */
+    padding: 6px 15px; /* Adjust padding */
+    background-color: transparent; /* Clear background */
+    color: var(--accent-blue); /* Blue text for selected sub-sub item */
+    font-weight: 500;
+  }
+  
+  
+  /* Sidebar Footer */
+  .sidebar-footer {
+    padding: 20px 0 10px;
+    border-top: 1px solid var(--border-light);
+    margin-top: auto; /* Push to bottom */
+  }
+  
+  .sidebar-actions {
+    margin-bottom: 10px;
+  }
+  
+  .sidebar-action-item {
+    font-size: 0.9em;
+    color: var(--text-sidebar-light);
+    padding: 8px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sidebar-action-item:hover {
+    background-color: var(--button-bg-light);
+  }
+  
+  .help-icon {
+    font-size: 1.1em;
+    color: var(--text-secondary);
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  
+  /* Main Content Styling */
+  .main-content {
+    flex-grow: 1;
+  
+    background-color: var(--bg-light);
+    overflow-y: auto; /* Allow scrolling for main content */
+  }
+   
+  .main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 5px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 1px; /* Space between wrapped items */
+  }
+  
+  .filter-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .filter-btn {
+    background-color: var(--button-bg-light);
+    border: none; /* No default border */
+    padding: 8px 14px;
+    border-radius: var(--border-radius-md);
+    font-size: 0.75em; /* Smaller font size for filter buttons */
+    color: var(--text-primary);
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  
+  .filter-btn:hover:not(.active) {
+    background-color: #fff;
+  }
+  
+  .filter-btn.active {
+    background-color: var(--accent-blue);
+    color: #E6E6E6;
+  }
+  
+  .filter-btn.icon-text-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .right-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto; /* Pushes to the right */
+  }
+  
+  .icon-only-btn {
+    background: none;
+    border: none;
+    font-size: 1.1em;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 8px; /* For clickable area */
+    border-radius: var(--border-radius-md);
+    transition: background-color 0.2s;
+  }
+  .icon-only-btn:hover {
+    background-color: var(--button-bg-light);
+  }
+  
+  .create-project-btn {
+    background-color: var(--accent-blue);
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: var(--border-radius-md);
+    font-size: 0.9em;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s;
+  }
+  .create-project-btn:hover {
+    background-color: #3158c5; /* Slightly darker blue on hover */
+  }
+  
+  
+  /* Todo Section */
+  .todo-section {
+    padding: 5px 0;
+  }
+  
+  .section-title {
+    font-size: 12px; /* Matches screenshot */
+    font-weight: 600;
+    color: var(--text-primary);
+    /* margin-bottom: 15px; */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    padding: 5px 0;
+    /* margins preserved */
+  }
+  
+  .add-icon {
+    background-color: var(--button-bg-light);
+    color: var(--text-secondary);
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+    cursor: pointer;
+    flex-shrink: 0; /* Prevent icon from shrinking */
+    margin-left: 10px;
+    transition: transform 0.3s ease;
+  }
+  
+  .add-icon.open {
+    transform: rotate(45deg); /* Rotate the icon when dropdown is open */
+  }
+  
+  .issue-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+  }
+  
+  .issue-item {
+    position: relative;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .issue-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .assignee-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .assignee-avatar:hover {
+    transform: scale(1.1);
+  }
+  
+  /* Custom Checkbox Styling */
+  .issue-checkbox-container {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    margin-right: 15px;
+    flex-shrink: 0;
+  }
+  .issue-checkbox {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  .custom-checkbox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #fff;
+    border: 2px solid var(--text-secondary);
+    border-radius: 50%;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+  .issue-checkbox:hover ~ .custom-checkbox {
+    border-color: var(--accent-blue);
+  }
+  .issue-checkbox:checked ~ .custom-checkbox {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+  }
+  .custom-checkbox:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  .issue-checkbox:checked ~ .custom-checkbox:after {
+    display: block;
+  }
+  .issue-checkbox-container .custom-checkbox:after {
+    left: 6px;
+    top: 2px;
+    width: 4px;
+    height: 9px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  
+  
+  .issue-id {
+    font-size: 0.85em; /* Smaller, matches screenshot */
+    color: var(--text-secondary);
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+  
+  .issue-title {
+    flex-grow: 1; /* Takes up remaining space */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .issue-badge {
+    background-color: var(--button-bg-light);
+    color: var(--text-secondary);
+    padding: 2px 7px;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.75em; /* Smaller font for badge */
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  
+  .issue-date {
+    font-size: 0.85em; /* Smaller, matches screenshot */
+    color: var(--text-secondary);
+    flex-shrink: 0; /* Prevent date from wrapping */
+    margin-left: auto; /* Pushes date to the far right */
+  }
+  
+  /* Modal Styling */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 300px;
+    text-align: center;
+  }
+  
+  .modal-content ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .modal-content ul li {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.9em;
+  }
+  
+  .modal-content ul li:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .modal-close {
+    margin-top: 10px;
+    cursor: pointer;
+    background: #3158c5;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+  }
+  
+  .modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 1.4em;
+    color: var(--text-primary);
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  
+  .form-group input[type="text"],
+  .form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-sm);
+    font-size: 1em;
+    font-family: var(--font-family);
+    color: var(--text-primary);
+  }
+  .form-group input[type="text"]::placeholder,
+  .form-group textarea::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.8;
+  }
+  .form-group input[type="text"]:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 2px rgba(62, 99, 221, 0.2);
+  }
+  
+  .submit-project-btn {
+    background-color: var(--accent-blue);
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: var(--border-radius-md);
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: auto;
+    display: block; /* Make it block to take full width of available space, or inline-block for fitting content */
+    margin-top: 25px;
+  }
+  .submit-project-btn:hover {
+    background-color: #3158c5;
+  }
+  
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+    }
+  
+    .sidebar {
+        position: fixed;
+        left: -var(--sidebar-width); /* Hidden by default */
+        top: 0;
+        bottom: 0;
+        z-index: 1001; /* Higher z-index than modal overlay */
+        transition: left 0.3s ease-in-out;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+    }
+  
+    .sidebar.open {
+        left: 0;
+    }
+  
+    .main-content {
+        padding: 15px;
+        flex-grow: 1;
+        width: 100%;
+    }
+  
+    /* Add a hamburger menu icon to toggle sidebar */
+    .main-header .right-actions {
+        margin-left: 0; /* Reset margin */
+    }
+    .main-header .filter-buttons {
+        order: 2; /* Move filter buttons below actions */
+        width: 100%;
+        justify-content: flex-start;
+    }
+  
+    /* Overlay for mobile sidebar */
+    body.sidebar-open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        cursor: pointer;
+    }
+  
+    .issue-item {
+        flex-wrap: wrap; /* Allow elements to wrap */
+        align-items: flex-start;
+        gap: 5px 0; /* Vertical gap between wrapped lines */
+    }
+  
+    .issue-checkbox-container {
+        order: 1; /* Put checkbox first */
+        margin-right: 10px;
+    }
+    .issue-id {
+        order: 2;
+        width: auto; /* Don't force full width */
+        margin-right: 10px;
+    }
+    .issue-title {
+        order: 3;
+        flex-basis: calc(100% - 30px); /* Take most of the remaining width */
+        margin-right: 0;
+    }
+    .issue-badge {
+        order: 4;
+        margin-left: 0;
+    }
+    .issue-date {
+        order: 5;
+        width: 100%; /* Date takes new line */
+        text-align: right;
+        margin-top: 5px;
+        margin-left: 0; /* Reset auto margin */
+    }
+  
+    .modal-content {
+        width: 95%;
+        margin: 20px auto;
+    }
+    
+  }
+  .todo-section .dropdown-toggle {
+    margin: 10px 0;
+    cursor: pointer;
+  }
+  
+  .issue-menu {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .issue-menu ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .issue-menu ul li {
+    margin: 5px 0;
+    cursor: pointer;
+  }
+  
+  /* Project Details Section */
+  .project-details-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .project-header {
+    margin-bottom: 20px;
+  }
+  
+  .project-title {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .editable-description {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    font-family: 'Arial', sans-serif;
+    color: #555;
+    margin-bottom: 15px;
+    resize: none; /* Prevent resizing */
+  }
+  
+  .project-links {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 15px;
+  }
+  
+  .project-links li {
+    margin-bottom: 5px;
+  }
+  
+  .project-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 1em;
+  }
+  
+  .project-link:hover {
+    text-decoration: underline;
+  }
+  
+  .project-invite {
+    font-size: 1em;
+    color: #666;
+  }
+  
+  .project-sub-issues {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .add-sub-issues-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+  }
+  
+  .add-sub-issues-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .project-activity {
+    margin-top: 20px;
+  }
+  
+  .activity-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .activity-log {
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 15px;
+  }
+  
+  .activity-comment {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+  }
+  
+  .activity-comment::placeholder {
+    color: #aaa;
+  }
+  
+  
+  /* Style the scrollbar track */
+  ::-webkit-scrollbar {
+    width: 8px;             /* Vertical scrollbar width */
+    height: 8px;             /* Horizontal scrollbar height */
+  }
+  
+  /* Scrollbar background */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  /* Scrollbar thumb */
+  ::-webkit-scrollbar-thumb {
+    background: #a19e9e;
+    border-radius: 10px;
+  }
+  
+  /* On hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  
+  /* Placeholder (at the top) */
+  .ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: #adb5bd;
+    pointer-events: none;
+    height: 0;
+  }
+  
+  
