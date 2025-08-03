@@ -3,20 +3,20 @@ import { IconTimeDuration0 } from "@tabler/icons-react";
 import moment from "moment";
 export function TableDemo() {
   const data = [
-   {
+    {
       id: 4,
       title: "Connect your tools",
       description: "(3)",
       status: "Open",
       priority: "High",
       createdAt: moment("2023-07-25").format("MMM Do YY"),
-      icon:[
+      icon: [
         {
           name: "filter",
           icon: <IconTimeDuration0 />,
           onClick: () => console.log("Filter clicked"),
-        }
-      ]
+        },
+      ],
     },
   ];
 
@@ -26,7 +26,7 @@ export function TableDemo() {
       <div className="flex items-center justify-between p-2 border-b">
         <h1 className="text-sm font-bold">Todo</h1>
         <button className="text-sm text-gray-500 hover:text-gray-700 flex items-center">
-          <span className="material-icons">filter_list</span> Filter
+          <span className="material-icons mr-3">+</span> 
         </button>
       </div>
 
@@ -44,23 +44,18 @@ export function TableDemo() {
                 <span className="text-gray-500">{issue.description}</span>
               </div>
               <div className="flex items-center space-x-1 text-gray-500">
-                {
-                  issue.icon.map((iconItem, index) => (
-                    <button
-                      key={index}
-                      onClick={iconItem.onClick}
-                      className="text-gray-500 hover:text-gray-700"
-                      title={iconItem.name}
-                    >
-                      {iconItem.icon}
-                    </button>
-                  ))
-                }
-             
-                <span className="text-sm text-gray-500">
-                  
-                  {issue.createdAt}</span>
-                 
+                {issue.icon.map((iconItem, index) => (
+                  <button
+                    key={index}
+                    onClick={iconItem.onClick}
+                    className="text-gray-500 hover:text-gray-700"
+                    title={iconItem.name}
+                  >
+                    {iconItem.icon}
+                  </button>
+                ))}
+
+                <span className="text-sm text-gray-500">{issue.createdAt}</span>
               </div>
             </li>
           ))}
