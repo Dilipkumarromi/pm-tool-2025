@@ -97,9 +97,13 @@
       --tw-translate-x: 0;
       --tw-translate-y: 0;
       --tw-translate-z: 0;
+      --tw-rotate-x: initial;
+      --tw-rotate-y: initial;
+      --tw-rotate-z: initial;
+      --tw-skew-x: initial;
+      --tw-skew-y: initial;
       --tw-space-y-reverse: 0;
       --tw-space-x-reverse: 0;
-      --tw-divide-y-reverse: 0;
       --tw-border-style: solid;
       --tw-leading: initial;
       --tw-font-weight: initial;
@@ -161,9 +165,13 @@
       --tw-translate-x: 0;
       --tw-translate-y: 0;
       --tw-translate-z: 0;
+      --tw-rotate-x: initial;
+      --tw-rotate-y: initial;
+      --tw-rotate-z: initial;
+      --tw-skew-x: initial;
+      --tw-skew-y: initial;
       --tw-space-y-reverse: 0;
       --tw-space-x-reverse: 0;
-      --tw-divide-y-reverse: 0;
       --tw-border-style: solid;
       --tw-leading: initial;
       --tw-font-weight: initial;
@@ -228,6 +236,8 @@
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --color-yellow-500: #edb200;
+    --color-green-500: #00c758;
+    --color-green-600: #00a544;
     --color-blue-600: #155dfc;
     --color-gray-50: #f9fafb;
     --color-gray-100: #f3f4f6;
@@ -269,6 +279,8 @@
   @supports (color: color(display-p3 0 0 0)) {
     :root, :host {
       --color-yellow-500: color(display-p3 .903651 .703062 .0745389);
+      --color-green-500: color(display-p3 .308734 .774754 .374307);
+      --color-green-600: color(display-p3 .243882 .640824 .294808);
       --color-blue-600: color(display-p3 .174493 .358974 .950247);
       --color-gray-50: color(display-p3 .977213 .98084 .985102);
       --color-gray-100: color(display-p3 .953567 .956796 .964321);
@@ -284,6 +296,8 @@
   @supports (color: lab(0% 0 0)) {
     :root, :host {
       --color-yellow-500: lab(76.3898% 14.5258 98.4589);
+      --color-green-500: lab(70.5521% -66.5147 45.8073);
+      --color-green-600: lab(59.0978% -58.6621 41.2579);
       --color-blue-600: lab(44.0605% 29.0279 -86.0352);
       --color-gray-50: lab(98.2596% -.247031 -.706708);
       --color-gray-100: lab(96.1596% -.0823438 -1.13575);
@@ -932,6 +946,10 @@
     top: calc(var(--spacing) * 4);
   }
 
+  .top-20 {
+    top: calc(var(--spacing) * 20);
+  }
+
   .right-0 {
     right: calc(var(--spacing) * 0);
   }
@@ -948,6 +966,10 @@
     right: calc(var(--spacing) * 4);
   }
 
+  .right-10 {
+    right: calc(var(--spacing) * 10);
+  }
+
   .bottom-0 {
     bottom: calc(var(--spacing) * 0);
   }
@@ -960,12 +982,24 @@
     left: calc(var(--spacing) * 2);
   }
 
+  .left-full {
+    left: 100%;
+  }
+
+  .z-2 {
+    z-index: 2;
+  }
+
   .z-10 {
     z-index: 10;
   }
 
   .z-20 {
     z-index: 20;
+  }
+
+  .z-30 {
+    z-index: 30;
   }
 
   .z-50 {
@@ -1038,8 +1072,16 @@
     margin-block: calc(var(--spacing) * 1);
   }
 
+  .my-2 {
+    margin-block: calc(var(--spacing) * 2);
+  }
+
   .my-8 {
     margin-block: calc(var(--spacing) * 8);
+  }
+
+  .mt-1 {
+    margin-top: calc(var(--spacing) * 1);
   }
 
   .mt-2 {
@@ -1183,6 +1225,10 @@
     height: calc(var(--spacing) * 5);
   }
 
+  .h-6 {
+    height: calc(var(--spacing) * 6);
+  }
+
   .h-7 {
     height: calc(var(--spacing) * 7);
   }
@@ -1227,6 +1273,10 @@
     height: 1px;
   }
 
+  .h-screen {
+    height: 100vh;
+  }
+
   .h-svh {
     height: 100svh;
   }
@@ -1267,8 +1317,20 @@
     width: calc(var(--spacing) * 5);
   }
 
+  .w-6 {
+    width: calc(var(--spacing) * 6);
+  }
+
   .w-8 {
     width: calc(var(--spacing) * 8);
+  }
+
+  .w-10 {
+    width: calc(var(--spacing) * 10);
+  }
+
+  .w-38 {
+    width: calc(var(--spacing) * 38);
   }
 
   .w-48 {
@@ -1374,6 +1436,10 @@
 
   .rotate-45 {
     rotate: 45deg;
+  }
+
+  .transform {
+    transform: var(--tw-rotate-x, ) var(--tw-rotate-y, ) var(--tw-rotate-z, ) var(--tw-skew-x, ) var(--tw-skew-y, );
   }
 
   .animate-in {
@@ -1544,18 +1610,6 @@
     margin-left: calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-x-reverse)));
   }
 
-  :where(.divide-y > :not(:last-child)) {
-    --tw-divide-y-reverse: 0;
-    border-bottom-style: var(--tw-border-style);
-    border-top-style: var(--tw-border-style);
-    border-top-width: calc(1px * var(--tw-divide-y-reverse));
-    border-bottom-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
-  }
-
-  :where(.divide-gray-200 > :not(:last-child)) {
-    border-color: var(--color-gray-200);
-  }
-
   .truncate {
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1580,10 +1634,6 @@
 
   .overflow-y-auto {
     overflow-y: auto;
-  }
-
-  .rounded {
-    border-radius: .25rem;
   }
 
   .rounded-\[2px\] {
@@ -1643,6 +1693,10 @@
   .border-l {
     border-left-style: var(--tw-border-style);
     border-left-width: 1px;
+  }
+
+  .border-gray-200 {
+    border-color: var(--color-gray-200);
   }
 
   .border-gray-300 {
@@ -1821,6 +1875,10 @@
     text-align: left;
   }
 
+  .text-right {
+    text-align: right;
+  }
+
   .align-middle {
     vertical-align: middle;
   }
@@ -1911,6 +1969,14 @@
     color: var(--color-gray-800);
   }
 
+  .text-green-500 {
+    color: var(--color-green-500);
+  }
+
+  .text-green-600 {
+    color: var(--color-green-600);
+  }
+
   .text-muted-foreground {
     color: var(--muted-foreground);
   }
@@ -1992,11 +2058,6 @@
 
   .shadow-none {
     --tw-shadow: 0 0 rgba(0, 0, 0, 0);
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-  }
-
-  .shadow-sm {
-    --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgba(0, 0, 0, .1)), 0 1px 2px -1px var(--tw-shadow-color, rgba(0, 0, 0, .1));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
 
@@ -2546,11 +2607,6 @@
     }
   }
 
-  .focus\:outline-none:focus {
-    --tw-outline-style: none;
-    outline-style: none;
-  }
-
   .focus-visible\:border-ring:focus-visible {
     border-color: var(--ring);
   }
@@ -2907,84 +2963,84 @@
     }
   }
 
-  .dark\:border-input:is(.dark *) {
+  .dark\:border-input:is(.teal *) {
     border-color: var(--input);
   }
 
-  .dark\:bg-destructive\/60:is(.dark *) {
+  .dark\:bg-destructive\/60:is(.teal *) {
     background-color: var(--destructive);
   }
 
   @supports (color: color-mix(in lab, red, red)) {
-    .dark\:bg-destructive\/60:is(.dark *) {
+    .dark\:bg-destructive\/60:is(.teal *) {
       background-color: color-mix(in oklab, var(--destructive) 60%, transparent);
     }
   }
 
-  .dark\:bg-gray-700:is(.dark *) {
+  .dark\:bg-gray-700:is(.teal *) {
     background-color: var(--color-gray-700);
   }
 
-  .dark\:bg-input\/30:is(.dark *) {
+  .dark\:bg-input\/30:is(.teal *) {
     background-color: var(--input);
   }
 
   @supports (color: color-mix(in lab, red, red)) {
-    .dark\:bg-input\/30:is(.dark *) {
+    .dark\:bg-input\/30:is(.teal *) {
       background-color: color-mix(in oklab, var(--input) 30%, transparent);
     }
   }
 
   @media (hover: hover) {
-    .dark\:hover\:bg-accent\/50:is(.dark *):hover {
+    .dark\:hover\:bg-accent\/50:is(.teal *):hover {
       background-color: var(--accent);
     }
 
     @supports (color: color-mix(in lab, red, red)) {
-      .dark\:hover\:bg-accent\/50:is(.dark *):hover {
+      .dark\:hover\:bg-accent\/50:is(.teal *):hover {
         background-color: color-mix(in oklab, var(--accent) 50%, transparent);
       }
     }
   }
 
   @media (hover: hover) {
-    .dark\:hover\:bg-input\/50:is(.dark *):hover {
+    .dark\:hover\:bg-input\/50:is(.teal *):hover {
       background-color: var(--input);
     }
 
     @supports (color: color-mix(in lab, red, red)) {
-      .dark\:hover\:bg-input\/50:is(.dark *):hover {
+      .dark\:hover\:bg-input\/50:is(.teal *):hover {
         background-color: color-mix(in oklab, var(--input) 50%, transparent);
       }
     }
   }
 
-  .dark\:focus-visible\:ring-destructive\/40:is(.dark *):focus-visible {
+  .dark\:focus-visible\:ring-destructive\/40:is(.teal *):focus-visible {
     --tw-ring-color: var(--destructive);
   }
 
   @supports (color: color-mix(in lab, red, red)) {
-    .dark\:focus-visible\:ring-destructive\/40:is(.dark *):focus-visible {
+    .dark\:focus-visible\:ring-destructive\/40:is(.teal *):focus-visible {
       --tw-ring-color: color-mix(in oklab, var(--destructive) 40%, transparent);
     }
   }
 
-  .dark\:aria-invalid\:ring-destructive\/40:is(.dark *)[aria-invalid="true"] {
+  .dark\:aria-invalid\:ring-destructive\/40:is(.teal *)[aria-invalid="true"] {
     --tw-ring-color: var(--destructive);
   }
 
   @supports (color: color-mix(in lab, red, red)) {
-    .dark\:aria-invalid\:ring-destructive\/40:is(.dark *)[aria-invalid="true"] {
+    .dark\:aria-invalid\:ring-destructive\/40:is(.teal *)[aria-invalid="true"] {
       --tw-ring-color: color-mix(in oklab, var(--destructive) 40%, transparent);
     }
   }
 
-  .dark\:data-\[variant\=destructive\]\:focus\:bg-destructive\/20:is(.dark *)[data-variant="destructive"]:focus {
+  .dark\:data-\[variant\=destructive\]\:focus\:bg-destructive\/20:is(.teal *)[data-variant="destructive"]:focus {
     background-color: var(--destructive);
   }
 
   @supports (color: color-mix(in lab, red, red)) {
-    .dark\:data-\[variant\=destructive\]\:focus\:bg-destructive\/20:is(.dark *)[data-variant="destructive"]:focus {
+    .dark\:data-\[variant\=destructive\]\:focus\:bg-destructive\/20:is(.teal *)[data-variant="destructive"]:focus {
       background-color: color-mix(in oklab, var(--destructive) 20%, transparent);
     }
   }
@@ -3407,6 +3463,31 @@
   initial-value: 0;
 }
 
+@property --tw-rotate-x {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-rotate-y {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-rotate-z {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-skew-x {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-skew-y {
+  syntax: "*";
+  inherits: false
+}
+
 @property --tw-space-y-reverse {
   syntax: "*";
   inherits: false;
@@ -3414,12 +3495,6 @@
 }
 
 @property --tw-space-x-reverse {
-  syntax: "*";
-  inherits: false;
-  initial-value: 0;
-}
-
-@property --tw-divide-y-reverse {
   syntax: "*";
   inherits: false;
   initial-value: 0;
