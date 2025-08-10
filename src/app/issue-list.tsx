@@ -1,9 +1,12 @@
-'use client'
+"use client";
 import React, { useState } from "react";
+import { CircleDotDashed,Cable ,CircleFadingPlus} from "lucide-react";
 import {
   DndContext,
   closestCenter,
   DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
   useDroppable,
 } from "@dnd-kit/core";
 import {
@@ -21,8 +24,9 @@ import {
 import moment from "moment";
 
 import { DropdownMenuIssueAction } from "@/components/dropdown";
+import { IssueStatus } from "@/components/issue-status";
 
-// SortableItem Component
+// Issue type
 interface Issue {
   id: number;
   title: string;
@@ -33,59 +37,100 @@ interface Issue {
   createdAt: string;
 }
 
+// Sortable Item
 function SortableItem({
   issue,
   sectionType,
   onRightClick,
+  onStatusClick,
+  isDragging,
 }: {
   issue: Issue;
   sectionType: string;
   onRightClick: (e: React.MouseEvent) => void;
+  onStatusClick: (issue: Issue) => void;
+  isDragging: boolean;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({
-      id: issue.id.toString(),
-      data: {
-        type: sectionType,
-        id: issue.id,
-      },
-    });
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id: issue.id.toString(),
+    data: {
+      type: sectionType,
+      id: issue.id,
+    },
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    zIndex: transform ? 999 : "auto",
+    backgroundColor: transform ? "#f0f9ff" : "white",
+    border: transform ? "1px dashed #60a5fa" : "none",
+    boxShadow: transform ? "0 4px 8px rgba(96, 165, 250, 0.4)" : "none",
   };
 
   return (
     <li
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
-      className="flex justify-between p-1 hover:bg-gray-100 cursor-grab"
+      className={`flex justify-between p-1 hover:bg-gray-50 text-sm ${
+        transform ? "select-none" : ""
+      }`}
       onContextMenu={(e) => {
         e.preventDefault();
         onRightClick(e);
       }}
     >
-      <div className="flex space-x-1 text-sm">
-        <span className="text-gray-500 cursor-pointer">---</span>
-        <span className="text-gray-500">STU-{issue.id}</span>
-        <span className="text-gray-500">
+      <div className="flex space-x-1 text-sm items-center">
+        {/* Drag Handle */}
+        <span
+          className="text-gray-500 cursor-grab select-none"
+         
+        >
+          ---
+        </span>
+
+        {/* Static ID */}
+        <span className="text-gray-500 text-sm">STU-{issue.id}</span>
+
+        {/* Status Circle Icon */}
+        <span
+          className="text-gray-500 text-sm cursor-pointer"
+          onClick={() => onStatusClick(issue)}
+        >
           <IconCircle size={17} />
         </span>
-        <span className="text-gray-800">{issue.title}</span>
-        <span className="text-gray-500">{issue.description}</span>
+
+        {/* Title & Description */}
+        <span className="text-gray-800 text-sm"  {...attributes}
+          {...listeners}>{issue.title}</span>
+        <span className="text-gray-500 text-sm">{issue.description}</span>
+
+        {/* Cable Icon Button */}
+        <span
+          className="m-1 cursor-pointer"
+          onClick={() => onStatusClick(issue)}
+        >
+          <Cable size={15} />
+        </span>
       </div>
-      <div className="flex items-center space-x-1 text-gray-500">
-        <span className="text-sm text-gray-500">{issue.createdAt}</span>
+
+      <div className="flex items-center space-x-1 text-gray-500 text-sm">
+        <CircleFadingPlus size={15} />
+        <span className="text-sm">{issue.createdAt}</span>
       </div>
     </li>
   );
 }
 
-// DroppableContainer for handling empty lists
-function DroppableContainer({ id, children }: { id: string; children: React.ReactNode }) {
+
+// Droppable Container
+function DroppableContainer({
+  id,
+  children,
+}: {
+  id: string;
+  children: React.ReactNode;
+}) {
   const { setNodeRef } = useDroppable({
     id,
     data: {
@@ -93,29 +138,17 @@ function DroppableContainer({ id, children }: { id: string; children: React.Reac
     },
   });
 
-  return (
-    <div ref={setNodeRef} className="min-h-[40px]">
-      {children}
-    </div>
-  );
+  return <div ref={setNodeRef} className="min-h-[40px]">{children}</div>;
 }
 
+// Main Component
 export function TableDemo() {
   const [dropdownStates, setDropdownStates] = useState<Record<string, boolean>>({
     todo: true,
     "in progress": true,
-    cancel: false,
-    done: false,
+    cancel: true,
+    done: true,
   });
-
-  const [issueActionDropdown, setIssueActionDropdown] = useState(false);
-  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
-
-  const handleRightClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setPosition({ x: e.clientX, y: e.clientY });
-    setIssueActionDropdown(true);
-  };
 
   const [data, setData] = useState([
     {
@@ -185,15 +218,37 @@ export function TableDemo() {
     },
   ]);
 
+  const [contextMenuPosition, setContextMenuPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  const [activeIssueForStatus, setActiveIssueForStatus] = useState<Issue | null>(
+    null
+  );
+  const [activeId, setActiveId] = useState<string | null>(null);
+
   const toggleDropdown = (type: string) => {
-    setDropdownStates((prevState) => ({
-      ...prevState,
-      [type]: !prevState[type],
-    }));
+    setDropdownStates((prev) => ({ ...prev, [type]: !prev[type] }));
+  };
+
+  const handleRightClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setContextMenuPosition({ x: e.clientX, y: e.clientY });
+    setShowContextMenu(true);
+  };
+
+  const handleStatusClick = (issue: Issue) => {
+    setActiveIssueForStatus(issue);
+  };
+
+  const onDragStart = ({ active }: DragStartEvent) => {
+    setActiveId(active.id as string);
   };
 
   const onDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    setActiveId(null);
 
     if (!over) return;
 
@@ -206,14 +261,14 @@ export function TableDemo() {
     const destinationId = over.id;
 
     const sourceSection = data.find((section) => section.type === sourceType);
-    const destinationSection = data.find((section) => section.type === destinationType);
-
+    const destinationSection = data.find(
+      (section) => section.type === destinationType
+    );
     if (!sourceSection || !destinationSection) return;
 
     const draggedItemIndex = sourceSection.issue_list.findIndex(
       (item) => item.id.toString() === sourceId.toString()
     );
-
     const draggedItem = sourceSection.issue_list[draggedItemIndex];
 
     if (sourceType === destinationType) {
@@ -226,11 +281,8 @@ export function TableDemo() {
       updatedList.splice(overIndex, 0, draggedItem);
 
       const updatedSections = data.map((section) =>
-        section.type === sourceType
-          ? { ...section, issue_list: updatedList }
-          : section
+        section.type === sourceType ? { ...section, issue_list: updatedList } : section
       );
-
       setData(updatedSections);
     } else {
       const updatedSourceList = [...sourceSection.issue_list];
@@ -254,12 +306,20 @@ export function TableDemo() {
     }
   };
 
+  // Find dragged issue for overlay rendering
+  const activeIssue =
+    activeId &&
+    data
+      .flatMap((section) => section.issue_list)
+      .find((issue) => issue.id.toString() === activeId);
+
   return (
     <DndContext
       collisionDetection={closestCenter}
       onDragEnd={onDragEnd}
+      onDragStart={onDragStart}
     >
-      <div className="bg-white shadow-md rounded-md">
+      <div className="bg-white shadow-md rounded-md relative">
         {data.map((section) => (
           <SortableContext
             key={section.type}
@@ -279,7 +339,7 @@ export function TableDemo() {
                       <IconChevronCompactRight size={12} />
                     )}
                     <span className="text-sm ml-2 capitalize">
-                      {section.type} ({section.issue_list.length})
+                      {section.type} {section.issue_list.length}
                     </span>
                   </span>
                 </span>
@@ -290,9 +350,9 @@ export function TableDemo() {
             </div>
 
             {dropdownStates[section.type] && (
-              <div className="p-2">
+              <div className="p-0">
                 <DroppableContainer id={section.type}>
-                  <ul className="space-y-1 min-h-[40px]">
+                  <ul className="space-y-1">
                     {section.issue_list.length > 0 ? (
                       section.issue_list.map((issue) => (
                         <SortableItem
@@ -300,6 +360,8 @@ export function TableDemo() {
                           issue={issue}
                           sectionType={section.type}
                           onRightClick={handleRightClick}
+                          onStatusClick={handleStatusClick}
+                          isDragging={activeId === issue.id.toString()}
                         />
                       ))
                     ) : (
@@ -314,19 +376,48 @@ export function TableDemo() {
           </SortableContext>
         ))}
 
-        {issueActionDropdown && (
-          <div className="absolute top-20 right-10">
+        {/* Right-click Dropdown */}
+        {showContextMenu && contextMenuPosition && (
+          <div
+            className="absolute z-50"
+            style={{ top: contextMenuPosition.y, left: contextMenuPosition.x }}
+          >
             <DropdownMenuIssueAction
-              dropdownPosition={position}
-              isOpen={issueActionDropdown}
-              onOpenChange={setIssueActionDropdown}
+              dropdownPosition={contextMenuPosition}
+              isOpen={showContextMenu}
+              onOpenChange={setShowContextMenu}
               onActionSelect={(action) => {
                 console.log("Selected:", action);
-                setIssueActionDropdown(false);
+                setShowContextMenu(false);
               }}
             />
           </div>
         )}
+
+        {/* Icon-click Issue Status Dropdown */}
+        {activeIssueForStatus && (
+          <div className="absolute top-20 right-10 z-50">
+            <IssueStatus
+              isOpen={!!activeIssueForStatus}
+              onOpenChange={(open) => {
+                if (!open) setActiveIssueForStatus(null);
+              }}
+              onActionSelect={(action) => {
+                console.log("Selected:", action, "for issue", activeIssueForStatus.id);
+                setActiveIssueForStatus(null);
+              }}
+            />
+          </div>
+        )}
+
+        {/* Drag Overlay for visual feedback */}
+        <DragOverlay>
+          {activeIssue ? (
+            <div className="bg-white border border-blue-400 shadow-lg rounded px-2 py-1 text-sm text-gray-800 pointer-events-none select-none">
+              {activeIssue.title}
+            </div>
+          ) : null}
+        </DragOverlay>
       </div>
     </DndContext>
   );
