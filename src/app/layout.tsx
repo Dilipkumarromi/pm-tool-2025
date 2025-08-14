@@ -8,7 +8,7 @@ import { IconPercentage60 } from "@tabler/icons-react";
 import { IconForbidFilled } from "@tabler/icons-react";
 import { IconFilter2 } from "@tabler/icons-react";
 import { IconAdjustmentsHorizontal } from "@tabler/icons-react";
-
+import 'rsuite/dist/rsuite-no-reset.min.css';
 import { Button } from "@/components/ui/button";
 import { FilterDropdown } from "./filter-dropdown";
 const geistSans = Geist({
@@ -32,9 +32,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 <body
   className={`${geistSans.variable} ${geistMono.variable} global-styles`}
 >
-        <SidebarProvider>
+        <SidebarProvider style={{backgroundColor:'#fcfcfc'}}>
           <AppSidebar />
-          <main className="w-full">
+          <main className="w-full" >
             <header className="bg-background sticky top-0 flex h-12 shrink-0 items-center gap-2 border-b px-4">
               <SidebarTrigger className="-ml-0" />
                 <div className="flex justify-between items-center w-full">

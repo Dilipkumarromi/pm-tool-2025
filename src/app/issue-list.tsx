@@ -25,6 +25,10 @@ import moment from "moment";
 
 import { DropdownMenuIssueAction } from "@/components/dropdown";
 import { IssueStatus } from "@/components/issue-status";
+ 
+import { ModelDialog } from "@/components/model";
+import IssueModel from "@/components/model/IssueModel";
+  
 
 // Issue type
 interface Issue {
@@ -44,12 +48,14 @@ function SortableItem({
   onRightClick,
   onStatusClick,
   isDragging,
+  onModalOpen,
 }: {
   issue: Issue;
   sectionType: string;
   onRightClick: (e: React.MouseEvent) => void;
   onStatusClick: (issue: Issue) => void;
   isDragging: boolean;
+  onModalOpen: (size?: string) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: issue.id.toString(),
@@ -58,7 +64,7 @@ function SortableItem({
       id: issue.id,
     },
   });
-
+  
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -69,6 +75,7 @@ function SortableItem({
   };
 
   return (
+    <>
     <li
       ref={setNodeRef}
       style={style}
@@ -115,10 +122,11 @@ function SortableItem({
       </div>
 
       <div className="flex items-center space-x-1 text-gray-500 text-sm">
-        <CircleFadingPlus size={15} />
+        <CircleFadingPlus size={15} onClick={() => onModalOpen("lg")}/>
         <span className="text-sm">{issue.createdAt}</span>
       </div>
     </li>
+     </>
   );
 }
 
@@ -313,6 +321,17 @@ export function TableDemo() {
       .flatMap((section) => section.issue_list)
       .find((issue) => issue.id.toString() === activeId);
 
+      const [modalOpen, setModalOpen] = useState(false);
+const [modalSize, setModalSize] = useState("md");
+
+const handleOpenModal = (size = "md") => {
+  setModalSize(size);
+  setModalOpen(true);
+};
+
+const handleCloseModal = () => {
+  setModalOpen(false);
+};
   return (
     <DndContext
       collisionDetection={closestCenter}
@@ -362,6 +381,7 @@ export function TableDemo() {
                           onRightClick={handleRightClick}
                           onStatusClick={handleStatusClick}
                           isDragging={activeId === issue.id.toString()}
+                          onModalOpen={handleOpenModal} 
                         />
                       ))
                     ) : (
@@ -393,23 +413,23 @@ export function TableDemo() {
             />
           </div>
         )}
-
+     
         {/* Icon-click Issue Status Dropdown */}
         {activeIssueForStatus && (
           <div className="absolute top-20 right-10 z-50">
             <IssueStatus
               isOpen={!!activeIssueForStatus}
-              onOpenChange={(open) => {
-                if (!open) setActiveIssueForStatus(null);
-              }}
+              dropdownPosition={contextMenuPosition}
+              onOpenChange={setShowContextMenu}
               onActionSelect={(action) => {
-                console.log("Selected:", action, "for issue", activeIssueForStatus.id);
-                setActiveIssueForStatus(null);
+                console.log("Selected:", action);
+                setShowContextMenu(false);
               }}
             />
           </div>
         )}
-
+         
+     
         {/* Drag Overlay for visual feedback */}
         <DragOverlay>
           {activeIssue ? (
@@ -418,7 +438,17 @@ export function TableDemo() {
             </div>
           ) : null}
         </DragOverlay>
+
+        {/* Modal for Issue Creation */}
+        {/* <ModelIssueCreate
+  open={modalOpen}
+  size={modalSize}
+  onClose={handleCloseModal}
+/> */}
+{/* <ModelDialog/> */}
+<IssueModel/>
       </div>
     </DndContext>
+ 
   );
 }

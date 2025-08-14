@@ -1,0 +1,93 @@
+.action-dropdown-menu-above-modal {
+  z-index: 1050; /* Ensures dropdown appears above the modal */
+  position: absolute;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  padding: 10px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.dropdown-item-icon {
+  font-size: 1.2em;
+}
+
+.dropdown-item-label {
+  flex-grow: 1;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+.action-dropdown-menu {
+  min-width: 200px;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.dropdown-item-icon {
+  font-size: 1.2em;
+}
+
+.dropdown-item-label {
+  flex-grow: 1;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+.circle-1 {
+  background-color: grey;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.circle-2 {
+  background-color: transparent; /* Represents a button without color */
+}
+.circle-3 {
+  background-color: gold; /* Represents In Progress */
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.circle-4 {
+  background-color: blue; /* Represents Done */
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.circle-5 {
+  background-color: red; /* Represents Canceled */
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.ProseMirror:empty::before {
+  content: attr(data-placeholder);
+  color: #aaa;
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
