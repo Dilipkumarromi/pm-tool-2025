@@ -1,68 +1,108 @@
-import { useState } from "react";
+/* eslint-disable react-hooks/rules-of-hooks */
+"use client"
 
-export default function ProfileDropdownWithNested({ isOpen }: { isOpen: boolean }) {
-  const [open, setOpen] = useState<boolean>(!isOpen);
-  
-  const [hoveredUser, setHoveredUser] = useState(false);
-
+import React from "react"
+import { CircleFadingPlus, Mail } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Clock, User, Box } from "lucide-react"
+export function UserProfileAssign() {
   return (
-    <div className="relative inline-block text-left">
-      {/* Dropdown */}
-      {open && (
-        <div className="absolute z-10 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg">
-          <ul className="py-1 text-sm text-gray-700">
-            <li className="flex justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              <span className="flex items-center gap-2">
-                <span className="text-gray-400">🌤</span>No Assignee
-              </span>
-              <span className="text-gray-400 text-xs">0</span>
-            </li>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <CircleFadingPlus size={15} className="cursor-pointer" />
+      </DropdownMenuTrigger>
 
-            {/* Nested user with hover */}
-            <li
-              className="relative px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2"
-              onMouseEnter={() => setHoveredUser(true)}
-              onMouseLeave={() => setHoveredUser(false)}
-            >
-              <img
-                src="https://i.pravatar.cc/24"
-                alt="avatar"
-                className="w-6 h-6 rounded-full"
-              />
-              romi.indan
-              <span className="ml-auto text-green-500">✔</span>
+      <DropdownMenuContent className="w-64">
+        {/* No assignee */}
+        <DropdownMenuItem className="flex items-center justify-between">
+          <span className="flex items-center">
+            <span className="mr-2">☀️</span> No assignee
+          </span>
+          <span className="text-xs text-gray-400">0</span>
+        </DropdownMenuItem>
 
-              {/* Hover card */}
-              {hoveredUser && (
-                <div className="absolute top-0 left-0 w-64 bg-white rounded-lg border border-gray-200 shadow-lg p-4 text-sm z-50">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src="https://i.pravatar.cc/40"
-                      alt="avatar"
-                      className="w-10 h-10 rounded-full"
-                    />
-                    <div>
-                      <div className="font-semibold">Dilip kumar romi</div>
-                      <div className="text-gray-500">romi.indan • <span className="text-green-600">Online</span></div>
-                    </div>
-                  </div>
-                  <hr className="my-2" />
-                  <div className="flex items-center gap-2 text-gray-500">
-                    <span>🕒</span> 20:13 local time
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-500 mt-1">
-                    <span>🎓</span> Student test
-                  </div>
-                </div>
-              )}
-            </li>
+        <DropdownMenuSeparator />
 
-            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-500">
-              Invite and assign...
-            </li>
-          </ul>
+        {/* Team members */}
+        <DropdownMenuLabel>Team members</DropdownMenuLabel>
+
+        {/* romi.indan with nested dropdown */}
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger className="flex items-center space-x-2">
+            <Avatar className="h-6 w-6">
+              <AvatarImage src="/avatar.jpg" alt="romi.indan" />
+              <AvatarFallback>R</AvatarFallback>
+            </Avatar>
+            <span>romi.indan</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent className="w-60">
+          <div className=" rounded-lg bg-white  p-4">
+      {/* Header with avatar + name */}
+      <div className="flex items-center gap-3">
+        <img
+          src="/avatar.jpg"
+          alt="Dilip kumar romi"
+          className="h-12 w-12 rounded-full object-cover"
+        />
+        <div>
+          <h2 className="text-base font-semibold text-gray-800">
+            Dilip kumar romi
+          </h2>
+          <div className="flex items-center gap-1 text-sm text-gray-600">
+            <span>romi.indan</span>
+            <span>•</span>
+            <span>Online</span>
+            <span className="ml-1 h-2 w-2 rounded-full bg-green-500 inline-block"></span>
+          </div>
         </div>
-      )}
+      </div>
+
+      {/* Divider */}
+      <hr className="my-3 border-gray-200" />
+
+      {/* Details */}
+      <div className="space-y-3 text-sm text-gray-700">
+        {/* Local time */}
+        <div className="flex items-center gap-2">
+          <Clock size={16} className="text-gray-500" />
+          <span>23:22 local time</span>
+        </div>
+
+        {/* Student test */}
+        <div className="flex items-center gap-2">
+          <User size={16} className="text-gray-500" />
+          <span>Student test</span>
+        </div>
+
+        {/* Assign */}
+        <div className="flex items-center gap-2">
+          <Box size={16} className="text-gray-500" />
+          <span>Assign</span>
+        </div>
+      </div>
     </div>
-  );
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+
+        <DropdownMenuSeparator />
+
+        {/* Invite new user */}
+        <DropdownMenuItem className="flex items-center space-x-2">
+          <Mail size={14} className="text-gray-500" />
+          <span>Invite and assign…</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
 }

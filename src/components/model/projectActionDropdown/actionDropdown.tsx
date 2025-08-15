@@ -16,8 +16,8 @@ const ActionDropdown = ({ data }:any) => {
   const dropdownOptions = data;
   const [selectedLabel, setSelectedLabel] = useState('Change status...');
   return (
-    <div className="w-100">
-      <div className="relative mt-1">
+    <div>
+      <div className="relative ">
          
         <Dropdown
           placement="bottomStart"

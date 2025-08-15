@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React, { useState } from "react";
-import { CircleDotDashed,Cable ,CircleFadingPlus} from "lucide-react";
+import { CircleDotDashed, Cable, CircleFadingPlus } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -9,13 +10,16 @@ import {
   DragOverlay,
   useDroppable,
 } from "@dnd-kit/core";
+import { AlertCircleIcon, BadgeCheckIcon, CheckIcon } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+
 import {
   SortableContext,
   verticalListSortingStrategy,
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-
+import { Dropdown, Avatar, HStack } from "rsuite";
 import {
   IconChevronDown,
   IconChevronCompactRight,
@@ -25,10 +29,9 @@ import moment from "moment";
 
 import { DropdownMenuIssueAction } from "@/components/dropdown";
 import { IssueStatus } from "@/components/issue-status";
- 
-import { ModelDialog } from "@/components/model";
+
 import IssueModel from "@/components/model/IssueModel";
-  
+import { UserProfileAssign } from "@/components/profile-dropdown";
 
 // Issue type
 interface Issue {
@@ -49,22 +52,25 @@ function SortableItem({
   onStatusClick,
   isDragging,
   onModalOpen,
-}: {
+}: // userProfile
+{
   issue: Issue;
   sectionType: string;
   onRightClick: (e: React.MouseEvent) => void;
   onStatusClick: (issue: Issue) => void;
   isDragging: boolean;
   onModalOpen: (size?: string) => void;
+  // userProfile: (size?: string) => void;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
-    id: issue.id.toString(),
-    data: {
-      type: sectionType,
-      id: issue.id,
-    },
-  });
-  
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({
+      id: issue.id.toString(),
+      data: {
+        type: sectionType,
+        id: issue.id,
+      },
+    });
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -73,63 +79,86 @@ function SortableItem({
     border: transform ? "1px dashed #60a5fa" : "none",
     boxShadow: transform ? "0 4px 8px rgba(96, 165, 250, 0.4)" : "none",
   };
-
+  const items1 = [
+    {
+      label: "No assignee",
+      icon: <i className="fa-solid fa-circle"></i>,
+      key: 1,
+    },
+    {
+      label: "Team members",
+      icon: <i className="fa-solid fa-users"></i>,
+      key: 2,
+    },
+    {
+      label: "New user",
+      icon: <i className="fa-solid fa-user-plus"></i>,
+      key: 3,
+    },
+    {
+      label: "Invite and assign...",
+      icon: <i className="fa-solid fa-paper-plane"></i>,
+      key: 4,
+    },
+  ];
   return (
     <>
-    <li
-      ref={setNodeRef}
-      style={style}
-      className={`flex justify-between p-1 hover:bg-gray-50 text-sm ${
-        transform ? "select-none" : ""
-      }`}
-      onContextMenu={(e) => {
-        e.preventDefault();
-        onRightClick(e);
-      }}
-    >
-      <div className="flex space-x-1 text-sm items-center">
-        {/* Drag Handle */}
-        <span
-          className="text-gray-500 cursor-grab select-none"
-         
-        >
-          ---
-        </span>
+      <li
+        ref={setNodeRef}
+        style={style}
+        className={`flex justify-between p-1 hover:bg-gray-50 text-md ${
+          transform ? "select-none" : ""
+        }`}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          onRightClick(e);
+        }}
+      >
+        <div className="flex space-x-1 text-sm items-center">
+          {/* Drag Handle */}
+          <span className="text-gray-500 cursor-grab select-none">---</span>
 
-        {/* Static ID */}
-        <span className="text-gray-500 text-sm">STU-{issue.id}</span>
+          {/* Static ID */}
+          <span className="text-gray-500 text-sm">STU-{issue.id}</span>
 
-        {/* Status Circle Icon */}
-        <span
-          className="text-gray-500 text-sm cursor-pointer"
-          onClick={() => onStatusClick(issue)}
-        >
-          <IconCircle size={17} />
-        </span>
+          {/* Status Circle Icon */}
+          <span
+            className="text-gray-500 text-sm cursor-pointer"
+            onClick={() => onStatusClick(issue)}
+          >
+            <IconCircle size={17} />
+          </span>
 
-        {/* Title & Description */}
-        <span className="text-gray-800 text-sm"  {...attributes}
-          {...listeners}>{issue.title}</span>
-        <span className="text-gray-500 text-sm">{issue.description}</span>
+          {/* Title & Description */}
+          <span
+            className="text-gray-800 text-sm"
+            {...attributes}
+            {...listeners}
+          >
+            {issue.title}
+          </span>
+          
+          <span className="text-gray-500 text-sm">{issue.description}</span>
+        
+          {/* Cable Icon Button */}
+          <span
+            className="m-1 cursor-pointer"
+            onClick={() => onStatusClick(issue)}
+          >
+            <Cable size={15} />
+            
+          </span>
+        </div>
 
-        {/* Cable Icon Button */}
-        <span
-          className="m-1 cursor-pointer"
-          onClick={() => onStatusClick(issue)}
-        >
-          <Cable size={15} />
-        </span>
-      </div>
-
-      <div className="flex items-center space-x-1 text-gray-500 text-sm">
-        <CircleFadingPlus size={15} onClick={() => onModalOpen("lg")}/>
-        <span className="text-sm">{issue.createdAt}</span>
-      </div>
-    </li>
-     </>
+        <div className="flex items-center space-x-1 text-gray-500 text-md">
+          {/* <CircleFadingPlus size={15} className="cursor-pointer" /> */}
+          <UserProfileAssign/>
+          <span className="text-sm">{issue.createdAt}</span>
+        </div>
+      </li>
+    </>
   );
 }
-
 
 // Droppable Container
 function DroppableContainer({
@@ -146,17 +175,23 @@ function DroppableContainer({
     },
   });
 
-  return <div ref={setNodeRef} className="min-h-[40px]">{children}</div>;
+  return (
+    <div ref={setNodeRef} className="min-h-[40px]">
+      {children}
+    </div>
+  );
 }
 
 // Main Component
 export function TableDemo() {
-  const [dropdownStates, setDropdownStates] = useState<Record<string, boolean>>({
-    todo: true,
-    "in progress": true,
-    cancel: true,
-    done: true,
-  });
+  const [dropdownStates, setDropdownStates] = useState<Record<string, boolean>>(
+    {
+      todo: true,
+      "in progress": true,
+      cancel: true,
+      done: true,
+    }
+  );
 
   const [data, setData] = useState([
     {
@@ -231,9 +266,8 @@ export function TableDemo() {
     y: number;
   } | null>(null);
   const [showContextMenu, setShowContextMenu] = useState(false);
-  const [activeIssueForStatus, setActiveIssueForStatus] = useState<Issue | null>(
-    null
-  );
+  const [activeIssueForStatus, setActiveIssueForStatus] =
+    useState<Issue | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const toggleDropdown = (type: string) => {
@@ -289,7 +323,9 @@ export function TableDemo() {
       updatedList.splice(overIndex, 0, draggedItem);
 
       const updatedSections = data.map((section) =>
-        section.type === sourceType ? { ...section, issue_list: updatedList } : section
+        section.type === sourceType
+          ? { ...section, issue_list: updatedList }
+          : section
       );
       setData(updatedSections);
     } else {
@@ -321,17 +357,18 @@ export function TableDemo() {
       .flatMap((section) => section.issue_list)
       .find((issue) => issue.id.toString() === activeId);
 
-      const [modalOpen, setModalOpen] = useState(false);
-const [modalSize, setModalSize] = useState("md");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalSize, setModalSize] = useState("md");
+  const [userProfile, setUserProfile] = useState(false);
+  const handleOpenModal = (size = "md") => {
+    setModalSize(size);
+    setModalOpen(true);
+  };
 
-const handleOpenModal = (size = "md") => {
-  setModalSize(size);
-  setModalOpen(true);
-};
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
 
-const handleCloseModal = () => {
-  setModalOpen(false);
-};
   return (
     <DndContext
       collisionDetection={closestCenter}
@@ -357,7 +394,8 @@ const handleCloseModal = () => {
                     ) : (
                       <IconChevronCompactRight size={12} />
                     )}
-                    <span className="text-sm ml-2 capitalize">
+                   
+                    <span className="text-sm font-semibold ml-2 capitalize">
                       {section.type} {section.issue_list.length}
                     </span>
                   </span>
@@ -369,9 +407,9 @@ const handleCloseModal = () => {
             </div>
 
             {dropdownStates[section.type] && (
-              <div className="p-0">
+              <div className="p-1">
                 <DroppableContainer id={section.type}>
-                  <ul className="space-y-1">
+                  <ul className="space-y-1 p-1">
                     {section.issue_list.length > 0 ? (
                       section.issue_list.map((issue) => (
                         <SortableItem
@@ -381,11 +419,12 @@ const handleCloseModal = () => {
                           onRightClick={handleRightClick}
                           onStatusClick={handleStatusClick}
                           isDragging={activeId === issue.id.toString()}
-                          onModalOpen={handleOpenModal} 
+                          onModalOpen={handleOpenModal}
+                          // userProfile={setUserProfile("sm")}
                         />
                       ))
                     ) : (
-                      <li className="h-12 border-2 border-dashed border-gray-300 rounded flex items-center justify-center text-sm text-gray-400">
+                      <li className="h-12 border-2 border-dashed border-gray-300 rounded flex items-center justify-center text-md text-gray-400">
                         Drop here
                       </li>
                     )}
@@ -413,7 +452,7 @@ const handleCloseModal = () => {
             />
           </div>
         )}
-     
+
         {/* Icon-click Issue Status Dropdown */}
         {activeIssueForStatus && (
           <div className="absolute top-20 right-10 z-50">
@@ -428,8 +467,7 @@ const handleCloseModal = () => {
             />
           </div>
         )}
-         
-     
+
         {/* Drag Overlay for visual feedback */}
         <DragOverlay>
           {activeIssue ? (
@@ -439,16 +477,8 @@ const handleCloseModal = () => {
           ) : null}
         </DragOverlay>
 
-        {/* Modal for Issue Creation */}
-        {/* <ModelIssueCreate
-  open={modalOpen}
-  size={modalSize}
-  onClose={handleCloseModal}
-/> */}
-{/* <ModelDialog/> */}
-<IssueModel/>
+        <IssueModel />
       </div>
     </DndContext>
- 
   );
 }
