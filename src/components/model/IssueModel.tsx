@@ -1,5 +1,6 @@
+/* eslint-disable react/display-name */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 
 declare global {
   interface Window {
@@ -31,11 +32,22 @@ import Text from "@tiptap/extension-text";
 import "./modelStyle.css"; // Ensure this path matches the file location
 import ActionDropdown from "./projectActionDropdown/actionDropdown";
 import EditText from "./projectActionDropdown/edit-text";
+interface IssueModelRef {
+  openModal: () => void;
+  closeModal: () => void;
+}
 
-export default function IssueModel() {
-  const [open, setOpen] = React.useState(false);
+const IssueModel = forwardRef<IssueModelRef>((_props, ref) => {
+  const [open, setOpen] = useState(false);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  useImperativeHandle(ref, () => ({
+    openModal: handleOpen,
+    closeModal: handleClose,
+  }));
+
   const buttonOne = [
     { key: 1, value: "backlog", label: "Backlog", count: 1 },
     { key: 2, value: "todo", label: "Todo", count: 2 },
@@ -46,10 +58,7 @@ export default function IssueModel() {
   ];
   return (
     <>
-      <Button appearance="primary" onClick={handleOpen}>
-        Open Modal
-      </Button>
-
+     
       <Modal
         size="md"
         open={open}
@@ -59,11 +68,11 @@ export default function IssueModel() {
           left: "20px",
           top: "20px",
         }}
-        className="w-full max-w-sm sm:max-w-md lg:max-w-1xl h-auto max-h-[85vh]"        
+        className="w-full max-w-sm sm:max-w-md lg:max-w-1xl h-auto max-h-[85vh] huDKpe cPppzc"        
       >
         <Modal.Header>
           <Modal.Title>
-            <div className="modal-header">
+            <div className="modal-header ">
               <TagGroup>
                 <Tag size="sm" color="blue">
                   STU
@@ -117,6 +126,6 @@ export default function IssueModel() {
       </Modal>
     </>
   );
-}
+})
 
- 
+export default IssueModel;

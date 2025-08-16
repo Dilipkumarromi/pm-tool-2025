@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { CircleDotDashed, Cable, CircleFadingPlus } from "lucide-react";
 import {
   DndContext,
@@ -32,6 +32,7 @@ import { IssueStatus } from "@/components/issue-status";
 
 import IssueModel from "@/components/model/IssueModel";
 import { UserProfileAssign } from "@/components/profile-dropdown";
+import { IssuePriority } from "@/components/issue-priority";
 
 // Issue type
 interface Issue {
@@ -52,6 +53,7 @@ function SortableItem({
   onStatusClick,
   isDragging,
   onModalOpen,
+  onIssuePriority
 }: // userProfile
 {
   issue: Issue;
@@ -60,6 +62,7 @@ function SortableItem({
   onStatusClick: (issue: Issue) => void;
   isDragging: boolean;
   onModalOpen: (size?: string) => void;
+  onIssuePriority:() => void
   // userProfile: (size?: string) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -116,7 +119,7 @@ function SortableItem({
       >
         <div className="flex space-x-1 text-sm items-center">
           {/* Drag Handle */}
-          <span className="text-gray-500 cursor-grab select-none">---</span>
+          <span className="text-gray-500 cursor-grab select-none cursor-pointer">---</span>
 
           {/* Static ID */}
           <span className="text-gray-500 text-sm">STU-{issue.id}</span>
@@ -360,15 +363,19 @@ export function TableDemo() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalSize, setModalSize] = useState("md");
   const [userProfile, setUserProfile] = useState(false);
+  const [open, setOpen] = React.useState(false)
   const handleOpenModal = (size = "md") => {
     setModalSize(size);
     setModalOpen(true);
   };
-
+  const IssuePriority = () => {
+    console.log(">>>issue priority")
+    setOpen(true);
+  };
   const handleCloseModal = () => {
     setModalOpen(false);
   };
-
+  const modalRef = useRef<{ openModal: () => void; closeModal: () => void }>(null);
   return (
     <DndContext
       collisionDetection={closestCenter}
@@ -401,8 +408,8 @@ export function TableDemo() {
                   </span>
                 </span>
               </div>
-              <button className="text-sm text-gray-500 hover:text-gray-700 flex items-center">
-                <span className="material-icons mr-3">+</span>
+              <button className="text-sm text-gray-500 hover:text-gray-700 flex items-center" onClick={() => modalRef.current?.openModal()}>
+                <span className="material-icons mr-3 cursor-pointer">+</span>
               </button>
             </div>
 
@@ -420,6 +427,7 @@ export function TableDemo() {
                           onStatusClick={handleStatusClick}
                           isDragging={activeId === issue.id.toString()}
                           onModalOpen={handleOpenModal}
+                          onIssuePriority={IssuePriority} 
                           // userProfile={setUserProfile("sm")}
                         />
                       ))
@@ -477,7 +485,8 @@ export function TableDemo() {
           ) : null}
         </DragOverlay>
 
-        <IssueModel />
+        <IssueModel ref={modalRef} />
+         <IssuePriority open={open} onOpenChange={setOpen}/>
       </div>
     </DndContext>
   );
