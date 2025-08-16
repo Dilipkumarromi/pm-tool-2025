@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React, { useRef, useState } from "react";
-import { CircleDotDashed, Cable, CircleFadingPlus } from "lucide-react";
+import { CircleDotDashed, Cable, CircleFadingPlus,CopyPlus, PlusCircle} from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -33,6 +33,7 @@ import { IssueStatus } from "@/components/issue-status";
 import IssueModel from "@/components/model/IssueModel";
 import { UserProfileAssign } from "@/components/profile-dropdown";
 import { IssuePriority } from "@/components/issue-priority";
+import { TooltipMessage } from "@/components/tooltip";
 
 // Issue type
 interface Issue {
@@ -78,7 +79,7 @@ function SortableItem({
     transform: CSS.Transform.toString(transform),
     transition,
     zIndex: transform ? 999 : "auto",
-    backgroundColor: transform ? "#f0f9ff" : "white",
+    backgroundColor: transform ? "#f8f8f8" : "white",
     border: transform ? "1px dashed #60a5fa" : "none",
     boxShadow: transform ? "0 4px 8px rgba(96, 165, 250, 0.4)" : "none",
   };
@@ -144,12 +145,15 @@ function SortableItem({
           <span className="text-gray-500 text-sm">{issue.description}</span>
         
           {/* Cable Icon Button */}
+          
           <span
             className="m-1 cursor-pointer"
             onClick={() => onStatusClick(issue)}
           >
+           
+           <TooltipMessage message="Add new item">
             <Cable size={15} />
-            
+            </TooltipMessage>
           </span>
         </div>
 
@@ -382,7 +386,7 @@ export function TableDemo() {
       onDragEnd={onDragEnd}
       onDragStart={onDragStart}
     >
-      <div className="bg-white shadow-md rounded-md relative">
+      <div className="bg-white  rounded-md relative mb-1">
         {data.map((section) => (
           <SortableContext
             key={section.type}
@@ -408,8 +412,11 @@ export function TableDemo() {
                   </span>
                 </span>
               </div>
-              <button className="text-sm text-gray-500 hover:text-gray-700 flex items-center" onClick={() => modalRef.current?.openModal()}>
-                <span className="material-icons mr-3 cursor-pointer">+</span>
+               
+              <button className="text-md text-gray-500 hover:text-gray-500 flex items-center" onClick={() => modalRef.current?.openModal()}>
+                {/* <span className="material-icons mr-5 cursor-pointer">+</span> */}
+
+                <CopyPlus size={15} className="cursor-pointer mr-4"/>
               </button>
             </div>
 
@@ -486,7 +493,12 @@ export function TableDemo() {
         </DragOverlay>
 
         <IssueModel ref={modalRef} />
-         <IssuePriority open={open} onOpenChange={setOpen}/>
+        {/* {
+          open&&(
+            <IssuePriority open={open} onOpenChange={setOpen}/>
+          )
+        } */}
+       
       </div>
     </DndContext>
   );
