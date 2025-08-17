@@ -42,6 +42,7 @@ export default function ChatWindow({
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showUserList, setShowUserList] = useState(false);
   const [replyTo, setReplyTo] = useState<Message | null>(null);
+  const [dropdownMessageId, setDropdownMessageId] = useState<number | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -85,12 +86,12 @@ export default function ChatWindow({
     (u) => !chatMembers.some((m) => m.id === u.id)
   );
 
-  const sendMessage = () => {
-    if (!newMessage && !file) return;
+  const sendMessage = (customText?: string) => {
+    if (!customText && !newMessage && !file) return;
     const msg: Message = {
       id: Date.now(),
       sender: "You",
-      text: newMessage || undefined,
+      text: customText || newMessage || undefined,
       image:
         file && file.type.startsWith("image/")
           ? URL.createObjectURL(file)
@@ -118,11 +119,26 @@ export default function ChatWindow({
     setChatMembers((prev) => prev.filter((u) => u.id !== id));
   };
 
+  // ✅ Auto-send when emoji is selected
   const onEmojiClick = (emojiData: EmojiClickData) => {
-    setNewMessage((prev) => prev + emojiData.emoji);
     setShowEmojiPicker(false);
+    sendMessage(emojiData.emoji);
   };
 
+  const handleDeleteForEveryone = (id: number) => {
+    setMessages(messages.filter((msg) => msg.id !== id));
+    setDropdownMessageId(null);
+  };
+
+  const handleDeleteForMe = (id: number) => {
+    // Replace with "This message was deleted" only for me
+    setMessages(
+      messages.map((msg) =>
+        msg.id === id ? { ...msg, text: "Message deleted for me" } : msg
+      )
+    );
+    setDropdownMessageId(null);
+  };
   return (
     <div className="fixed bottom-0 right-6 w-80 bg-white shadow-lg rounded-t-lg border flex flex-col">
       {/* Header */}
@@ -144,8 +160,7 @@ export default function ChatWindow({
 
         {/* Dropdown */}
         {chatType === "group" && showUserList && (
-          <div
-            className="absolute left-2 -top-2 -translate-y-full w-72 max-h-64 overflow-y-auto
+          <div className="absolute left-2 -top-2 -translate-y-full w-72 max-h-64 overflow-y-auto
                        bg-white text-gray-800 border rounded shadow-xl z-50"
           >
             <div className="p-2 border-b font-semibold text-sm">Add member</div>
@@ -233,6 +248,7 @@ export default function ChatWindow({
                 ↩ Reply
               </button>
             </div>
+            
           </div>
         ))}
         <div ref={messagesEndRef} />
@@ -288,6 +304,10 @@ export default function ChatWindow({
             if (e.key === "Enter" && (newMessage.trim() || file)) {
               sendMessage();
             }
+            if (e.key === "Tab") {
+              e.preventDefault();
+              setShowEmojiPicker(true);
+            }
           }}
         />
 
@@ -329,7 +349,7 @@ export default function ChatWindow({
         <button
           type="button"
           className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full"
-          onClick={sendMessage}
+          onClick={() => sendMessage()}
         >
           <Send size={20} />
         </button>
