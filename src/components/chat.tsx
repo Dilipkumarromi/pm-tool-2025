@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
-import { Send, Smile } from "lucide-react";
+import { Send, Smile, Paperclip } from "lucide-react";
 
 type Message = {
   id: number;
@@ -101,7 +101,7 @@ export default function ChatWindow({
     setMessages((prev) => [...prev, msg]);
     setNewMessage("");
     setFile(null);
-    setReplyTo(null); // clear reply after sending
+    setReplyTo(null);
   };
 
   const addUser = () => {
@@ -238,6 +238,28 @@ export default function ChatWindow({
         <div ref={messagesEndRef} />
       </div>
 
+      {/* File/Image Preview */}
+      {file && (
+        <div className="border-t p-2 bg-gray-50 text-xs flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            {file.type.startsWith("image/") ? (
+              <img
+                src={URL.createObjectURL(file)}
+                alt="preview"
+                className="w-12 h-12 object-cover rounded"
+              />
+            ) : (
+              <span className="flex items-center gap-1 text-gray-700">
+                📄 {file.name}
+              </span>
+            )}
+          </div>
+          <button onClick={() => setFile(null)} className="text-red-500 text-xs">
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* Reply Preview */}
       {replyTo && (
         <div className="border-t p-1 bg-gray-100 text-xs flex justify-between items-center">
@@ -258,16 +280,16 @@ export default function ChatWindow({
       <div className="p-2 border-t flex items-center gap-2 relative">
         {/* Text Input */}
         <input
-  className="flex-1 border rounded-full px-3 py-2 text-sm focus:outline-none"
-  placeholder="Type a message..."
-  value={newMessage}
-  onChange={(e) => setNewMessage(e.target.value)}
-  onKeyDown={(e) => {
-    if (e.key === "Enter" && newMessage.trim()) {
-      sendMessage();
-    }
-  }}
-/>
+          className="flex-1 border rounded-full px-3 py-2 text-sm focus:outline-none"
+          placeholder="Type a message..."
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && (newMessage.trim() || file)) {
+              sendMessage();
+            }
+          }}
+        />
 
         {/* Emoji Button */}
         <div className="relative">
@@ -284,6 +306,23 @@ export default function ChatWindow({
               <EmojiPicker onEmojiClick={onEmojiClick} />
             </div>
           )}
+        </div>
+
+        {/* File Attach Button */}
+        <div className="relative">
+          <input
+            type="file"
+            id="fileInput"
+            className="hidden"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+          />
+          <button
+            type="button"
+            onClick={() => document.getElementById("fileInput")?.click()}
+            className="text-gray-600 hover:text-green-500"
+          >
+            <Paperclip size={22} />
+          </button>
         </div>
 
         {/* Send Button */}
