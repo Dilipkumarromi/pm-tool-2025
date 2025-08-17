@@ -124,7 +124,7 @@ function SortableItem({
       >
         <div className="flex space-x-1 text-sm items-center">
           {/* Drag Handle */}
-          <span className="text-gray-500 cursor-grab select-none cursor-pointer">---</span>
+          <span className="text-gray-500 cursor-grab select-none cursor-pointer" onClick={()=>onIssuePriority()}>---</span>
 
           {/* Static ID */}
           <span className="text-gray-500 text-sm">STU-{issue.id}</span>
@@ -517,14 +517,17 @@ export function TableDemo() {
         <ChatWindow
           chatType="group" // or "single"
           chatName="Project Group"
-          avatar="https://via.placeholder.com/40"
+          avatar="https://i.pravatar.cc/40?img=52"
           members={[
-            { id: 1, name: "Alice", avatar: "https://via.placeholder.com/40" },
-            { id: 2, name: "Bob", avatar: "https://via.placeholder.com/40" },
+            { id: 1, name: "Alice", avatar: "https://i.pravatar.cc/40?img=40" },
+            { id: 2, name: "Bob", avatar: "https://i.pravatar.cc/40?img=50" },
           ]}
           onClose={() => setOpenChat(false)}
         />
       )}
+      {/* {open&&(
+        <IssuePriority />
+      )} */}
       </div>
     </DndContext>
   );
