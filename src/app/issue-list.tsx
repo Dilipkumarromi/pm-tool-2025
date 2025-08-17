@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React, { useRef, useState } from "react";
-import { CircleDotDashed, Cable, CircleFadingPlus,CopyPlus, PlusCircle} from "lucide-react";
+import { CircleDotDashed, Cable, CircleFadingPlus,ListPlus, PlusCircle,MessageCircle} from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -12,7 +12,7 @@ import {
 } from "@dnd-kit/core";
 import { AlertCircleIcon, BadgeCheckIcon, CheckIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-
+ 
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -34,6 +34,7 @@ import IssueModel from "@/components/model/IssueModel";
 import { UserProfileAssign } from "@/components/profile-dropdown";
 import { IssuePriority } from "@/components/issue-priority";
 import { TooltipMessage } from "@/components/tooltip";
+import ChatWindow from "@/components/chat";
 
 // Issue type
 interface Issue {
@@ -54,7 +55,8 @@ function SortableItem({
   onStatusClick,
   isDragging,
   onModalOpen,
-  onIssuePriority
+  onIssuePriority,
+  onChatWindow
 }: // userProfile
 {
   issue: Issue;
@@ -64,6 +66,7 @@ function SortableItem({
   isDragging: boolean;
   onModalOpen: (size?: string) => void;
   onIssuePriority:() => void
+  onChatWindow:() => void
   // userProfile: (size?: string) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -105,6 +108,7 @@ function SortableItem({
       key: 4,
     },
   ];
+  
   return (
     <>
       <li
@@ -147,12 +151,16 @@ function SortableItem({
           {/* Cable Icon Button */}
           
           <span
-            className="m-1 cursor-pointer"
-            onClick={() => onStatusClick(issue)}
+            className="m-1 ml-4  cursor-pointer"
+            onClick={() => {
+              onStatusClick(issue);   // keep your existing logic
+              onChatWindow();         // also open chat window
+            }}
           >
            
-           <TooltipMessage message="Add new item">
-            <Cable size={15} />
+           <TooltipMessage message="Group Decurion?">
+            <MessageCircle size={15} />
+             
             </TooltipMessage>
           </span>
         </div>
@@ -367,6 +375,7 @@ export function TableDemo() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalSize, setModalSize] = useState("md");
   const [userProfile, setUserProfile] = useState(false);
+  const [openChat, setOpenChat] = useState(false)
   const [open, setOpen] = React.useState(false)
   const handleOpenModal = (size = "md") => {
     setModalSize(size);
@@ -380,6 +389,10 @@ export function TableDemo() {
     setModalOpen(false);
   };
   const modalRef = useRef<{ openModal: () => void; closeModal: () => void }>(null);
+  const chatWindow=()=>{
+    setOpenChat(true)
+    console.log(">>>chat window")
+  }
   return (
     <DndContext
       collisionDetection={closestCenter}
@@ -415,8 +428,9 @@ export function TableDemo() {
                
               <button className="text-md text-gray-500 hover:text-gray-500 flex items-center" onClick={() => modalRef.current?.openModal()}>
                 {/* <span className="material-icons mr-5 cursor-pointer">+</span> */}
-
-                <CopyPlus size={15} className="cursor-pointer mr-4"/>
+                  <TooltipMessage message="Add task">
+                <ListPlus size={20} className="cursor-pointer mr-4"/>
+                </TooltipMessage>
               </button>
             </div>
 
@@ -435,6 +449,7 @@ export function TableDemo() {
                           isDragging={activeId === issue.id.toString()}
                           onModalOpen={handleOpenModal}
                           onIssuePriority={IssuePriority} 
+                          onChatWindow={chatWindow}
                           // userProfile={setUserProfile("sm")}
                         />
                       ))
@@ -498,7 +513,18 @@ export function TableDemo() {
             <IssuePriority open={open} onOpenChange={setOpen}/>
           )
         } */}
-       
+       {openChat && (
+        <ChatWindow
+          chatType="group" // or "single"
+          chatName="Project Group"
+          avatar="https://via.placeholder.com/40"
+          members={[
+            { id: 1, name: "Alice", avatar: "https://via.placeholder.com/40" },
+            { id: 2, name: "Bob", avatar: "https://via.placeholder.com/40" },
+          ]}
+          onClose={() => setOpenChat(false)}
+        />
+      )}
       </div>
     </DndContext>
   );

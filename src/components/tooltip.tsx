@@ -14,8 +14,8 @@ import {
       <Tooltip>
         <TooltipTrigger asChild>
           {children}
-        </TooltipTrigger>
-        <TooltipContent>
+        </TooltipTrigger >
+        <TooltipContent className="text-sm mr-3">
           <p>{message}</p>
         </TooltipContent>
       </Tooltip>
