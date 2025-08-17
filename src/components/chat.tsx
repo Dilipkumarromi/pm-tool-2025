@@ -1,31 +1,32 @@
-"use client"
-import React, { useState, useRef, useEffect } from "react"
-import EmojiPicker, { EmojiClickData } from "emoji-picker-react"
+"use client";
+import React, { useState, useRef, useEffect } from "react";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
+import { Send, Smile } from "lucide-react";
 
 type Message = {
-  id: number
-  sender: string
-  text?: string
-  image?: string
-  file?: string
-  replyTo?: Message
-}
+  id: number;
+  sender: string;
+  text?: string;
+  image?: string;
+  file?: string;
+  replyTo?: Message;
+};
 
 type User = {
-  id: number
-  name: string
-  avatar: string
-  email?: string
-  mobile?: string
-}
+  id: number;
+  name: string;
+  avatar: string;
+  email?: string;
+  mobile?: string;
+};
 
 type ChatWindowProps = {
-  chatType: "single" | "group"
-  chatName: string
-  avatar: string
-  members?: User[]
-  onClose: () => void
-}
+  chatType: "single" | "group";
+  chatName: string;
+  avatar: string;
+  members?: User[];
+  onClose: () => void;
+};
 
 export default function ChatWindow({
   chatType,
@@ -34,66 +35,93 @@ export default function ChatWindow({
   members = [],
   onClose,
 }: ChatWindowProps) {
-  const [messages, setMessages] = useState<Message[]>([])
-  const [newMessage, setNewMessage] = useState("")
-  const [file, setFile] = useState<File | null>(null)
-  const [chatMembers, setChatMembers] = useState<User[]>(members)
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-  const [showUserList, setShowUserList] = useState(false)
-  const [replyTo, setReplyTo] = useState<Message | null>(null)
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [chatMembers, setChatMembers] = useState<User[]>(members);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showUserList, setShowUserList] = useState(false);
+  const [replyTo, setReplyTo] = useState<Message | null>(null);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Scroll to latest message
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const availableUsers: User[] = [
-    { id: 101, name: "Alice Johnson",  avatar: "https://i.pravatar.cc/40?img=11", email: "alice@example.com",  mobile: "111-222-3333" },
-    { id: 102, name: "Bob Williams",   avatar: "https://i.pravatar.cc/40?img=12", email: "bob@example.com",    mobile: "444-555-6666" },
-    { id: 103, name: "Charlie Singh",  avatar: "https://i.pravatar.cc/40?img=13", email: "charlie@example.com",mobile: "777-888-9999" },
-    { id: 104, name: "Daisy Kapoor",   avatar: "https://i.pravatar.cc/40?img=14", email: "daisy@example.com",  mobile: "999-000-1234" },
-  ]
+    {
+      id: 101,
+      name: "Alice Johnson",
+      avatar: "https://i.pravatar.cc/40?img=11",
+      email: "alice@example.com",
+      mobile: "111-222-3333",
+    },
+    {
+      id: 102,
+      name: "Bob Williams",
+      avatar: "https://i.pravatar.cc/40?img=12",
+      email: "bob@example.com",
+      mobile: "444-555-6666",
+    },
+    {
+      id: 103,
+      name: "Charlie Singh",
+      avatar: "https://i.pravatar.cc/40?img=13",
+      email: "charlie@example.com",
+      mobile: "777-888-9999",
+    },
+    {
+      id: 104,
+      name: "Daisy Kapoor",
+      avatar: "https://i.pravatar.cc/40?img=14",
+      email: "daisy@example.com",
+      mobile: "999-000-1234",
+    },
+  ];
 
   const dropdownUsers = availableUsers.filter(
-    u => !chatMembers.some(m => m.id === u.id)
-  )
+    (u) => !chatMembers.some((m) => m.id === u.id)
+  );
 
   const sendMessage = () => {
-    if (!newMessage && !file) return
+    if (!newMessage && !file) return;
     const msg: Message = {
       id: Date.now(),
       sender: "You",
       text: newMessage || undefined,
-      image: file && file.type.startsWith("image/") ? URL.createObjectURL(file) : undefined,
+      image:
+        file && file.type.startsWith("image/")
+          ? URL.createObjectURL(file)
+          : undefined,
       file: file && !file.type.startsWith("image/") ? file.name : undefined,
       replyTo: replyTo || undefined,
-    }
-    setMessages(prev => [...prev, msg])
-    setNewMessage("")
-    setFile(null)
-    setReplyTo(null) // clear reply after sending
-  }
+    };
+    setMessages((prev) => [...prev, msg]);
+    setNewMessage("");
+    setFile(null);
+    setReplyTo(null); // clear reply after sending
+  };
 
   const addUser = () => {
-    setShowUserList(s => !s)
-  }
+    setShowUserList((s) => !s);
+  };
 
   const selectUser = (user: User) => {
-    if (chatMembers.find(u => u.id === user.id)) return
-    setChatMembers(prev => [...prev, user])
-    setShowUserList(false)
-  }
+    if (chatMembers.find((u) => u.id === user.id)) return;
+    setChatMembers((prev) => [...prev, user]);
+    setShowUserList(false);
+  };
 
   const removeUser = (id: number) => {
-    setChatMembers(prev => prev.filter(u => u.id !== id))
-  }
+    setChatMembers((prev) => prev.filter((u) => u.id !== id));
+  };
 
   const onEmojiClick = (emojiData: EmojiClickData) => {
-    setNewMessage(prev => prev + emojiData.emoji)
-    setShowEmojiPicker(false)
-  }
+    setNewMessage((prev) => prev + emojiData.emoji);
+    setShowEmojiPicker(false);
+  };
 
   return (
     <div className="fixed bottom-0 right-6 w-80 bg-white shadow-lg rounded-t-lg border flex flex-col">
@@ -110,7 +138,9 @@ export default function ChatWindow({
             )}
           </div>
         </div>
-        <button onClick={onClose} className="font-bold">×</button>
+        <button onClick={onClose} className="font-bold">
+          ×
+        </button>
 
         {/* Dropdown */}
         {chatType === "group" && showUserList && (
@@ -120,19 +150,31 @@ export default function ChatWindow({
           >
             <div className="p-2 border-b font-semibold text-sm">Add member</div>
             {dropdownUsers.length === 0 ? (
-              <div className="p-3 text-xs text-gray-500">No more users to add</div>
+              <div className="p-3 text-xs text-gray-500">
+                No more users to add
+              </div>
             ) : (
-              dropdownUsers.map(user => (
+              dropdownUsers.map((user) => (
                 <button
                   key={user.id}
                   onClick={() => selectUser(user)}
                   className="w-full text-left p-2 hover:bg-gray-100 flex items-start gap-2"
                 >
-                  <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full mt-0.5" />
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
+                    className="w-8 h-8 rounded-full mt-0.5"
+                  />
                   <div className="flex-1">
-                    <div className="text-sm font-medium leading-5">{user.name}</div>
-                    <div className="text-[11px] text-gray-500">{user.email}</div>
-                    <div className="text-[11px] text-gray-500">{user.mobile}</div>
+                    <div className="text-sm font-medium leading-5">
+                      {user.name}
+                    </div>
+                    <div className="text-[11px] text-gray-500">
+                      {user.email}
+                    </div>
+                    <div className="text-[11px] text-gray-500">
+                      {user.mobile}
+                    </div>
                   </div>
                   <span className="text-blue-400 text-xs mt-1">Add</span>
                 </button>
@@ -163,24 +205,33 @@ export default function ChatWindow({
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-2 space-y-2 bg-gray-50 max-h-64">
         {messages.map((msg) => (
-          <div key={msg.id} className="flex flex-col items-start border-l-2 border-transparent hover:border-blue-300 p-1">
+          <div
+            key={msg.id}
+            className="flex flex-col items-start border-l-2 border-transparent hover:border-blue-300 p-1"
+          >
             {msg.replyTo && (
               <div className="text-xs bg-gray-200 px-2 py-1 rounded mb-1 text-gray-600">
-                Replying to <span className="font-semibold">{msg.replyTo.sender}</span>:{" "}
+                Replying to{" "}
+                <span className="font-semibold">{msg.replyTo.sender}</span>:{" "}
                 {msg.replyTo.text || msg.replyTo.file || "📷 image"}
               </div>
             )}
             <p className="text-xs font-bold">{msg.sender}</p>
-            {msg.text && <p className="bg-blue-100 px-2 py-2 rounded">{msg.text}</p>}
-            {msg.image && <img src={msg.image} alt="attachment" className="w-32 rounded" />}
+            {msg.text && (
+              <p className="bg-blue-100 px-2 py-2 rounded">{msg.text}</p>
+            )}
+            {msg.image && (
+              <img src={msg.image} alt="attachment" className="w-32 rounded" />
+            )}
             {msg.file && (
               <div className="flex items-center gap-1 text-sm bg-gray-200 px-2 py-1 rounded">
                 📄 {msg.file}
               </div>
             )}
             <div className="flex gap-2 text-xs mt-1">
-              <button onClick={() => setReplyTo(msg)} className="text-blue-500">↩ Reply</button>
-              <button className="text-blue-500">👍 Like</button>
+              <button onClick={() => setReplyTo(msg)} className="text-blue-500">
+                ↩ Reply
+              </button>
             </div>
           </div>
         ))}
@@ -194,48 +245,56 @@ export default function ChatWindow({
             Replying to <span className="font-semibold">{replyTo.sender}</span>:{" "}
             {replyTo.text || replyTo.file || "📷 image"}
           </div>
-          <button onClick={() => setReplyTo(null)} className="text-red-500 text-xs">✕</button>
+          <button
+            onClick={() => setReplyTo(null)}
+            className="text-red-500 text-xs"
+          >
+            ✕
+          </button>
         </div>
       )}
 
-      {/* Input */}
-      <div className="p-2 border-t flex gap-1 relative">
-        <button
-          onClick={() => setShowEmojiPicker(s => !s)}
-          className="text-xl px-2"
-        >
-          😊
-        </button>
-
-        {showEmojiPicker && (
-          <div className="absolute bottom-12 left-2 z-50">
-            <EmojiPicker onEmojiClick={onEmojiClick} />
-          </div>
-        )}
-
+      {/* Input Section */}
+      <div className="p-2 border-t flex items-center gap-2 relative">
+        {/* Text Input */}
         <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Type a message..."
-          className="flex-1 border rounded px-2 py-1 text-sm"
-        />
-        <input
-          type="file"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
-          className="hidden"
-          id="fileUpload"
-        />
-        <label htmlFor="fileUpload" className="cursor-pointer text-blue-400 px-2">
-          📎
-        </label>
+  className="flex-1 border rounded-full px-3 py-2 text-sm focus:outline-none"
+  placeholder="Type a message..."
+  value={newMessage}
+  onChange={(e) => setNewMessage(e.target.value)}
+  onKeyDown={(e) => {
+    if (e.key === "Enter" && newMessage.trim()) {
+      sendMessage();
+    }
+  }}
+/>
+
+        {/* Emoji Button */}
+        <div className="relative">
+          <button
+            type="button"
+            className="text-gray-600 hover:text-yellow-500"
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+          >
+            <Smile size={22} />
+          </button>
+
+          {showEmojiPicker && (
+            <div className="absolute bottom-12 right-0 z-50">
+              <EmojiPicker onEmojiClick={onEmojiClick} />
+            </div>
+          )}
+        </div>
+
+        {/* Send Button */}
         <button
+          type="button"
+          className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full"
           onClick={sendMessage}
-          className="bg-blue-400 text-white px-3 rounded"
         >
-          Send
+          <Send size={20} />
         </button>
       </div>
     </div>
-  )
+  );
 }
