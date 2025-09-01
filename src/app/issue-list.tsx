@@ -389,6 +389,7 @@ export function TableDemo() {
   const [modalSize, setModalSize] = useState("md");
   const [openChat, setOpenChat] = useState(false);
   const [priorityOpen, setPriorityOpen] = useState(false);
+  const [isStatus, setStatus] = useState(false);
   const [value, setValue] = useState("");
   const handleOpenModal = (size = "md") => {
     setModalSize(size);
@@ -479,6 +480,7 @@ export function TableDemo() {
                               y: rect.bottom,
                             });
                             setPriorityOpen(true);
+                            setStatus(false)
                           }}
                           onStatus={(e) => {
                             const rect = (
@@ -489,6 +491,7 @@ export function TableDemo() {
                               y: rect.bottom,
                             });
                             setPriorityOpen(true);
+                            setStatus(true)
                           }}
                           // userProfile={setUserProfile("sm")}
                         />
@@ -568,11 +571,20 @@ export function TableDemo() {
         {priorityOpen && priorityDropdownPos && (
           <CommonDropdown
             open={priorityOpen}
-            frameworks={[
+            frameworks={
+              isStatus
+          ? [
               { value: "low", label: "Low" },
               { value: "medium", label: "Medium" },
               { value: "high", label: "High" },
-            ]}
+            ]
+          : [
+              { value: "todo", label: "To Do" },
+              { value: "in_progress", label: "In Progress" },
+              { value: "done", label: "Done" },
+              { value: "cancel", label: "Cancelled" },
+            ]
+            }
             onOpenChange={setPriorityOpen}
             style={{
               position: "absolute",

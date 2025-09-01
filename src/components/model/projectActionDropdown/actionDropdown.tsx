@@ -59,7 +59,7 @@ export function CommonDropdown({
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverContent className="w-[200px] p-0" style={style}>
         <Command>
-          <CommandInput placeholder="Search framework..." className="h-9" />
+          <CommandInput placeholder="Search..." className="h-9" />
           <CommandList>
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
