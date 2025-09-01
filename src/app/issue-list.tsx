@@ -10,7 +10,7 @@ import {
   PlusCircle,
   MessageCircle,
 } from "lucide-react";
-
+import "./new-globals.css";
 import {
   DndContext,
   closestCenter,
@@ -31,9 +31,22 @@ import {
   IconChevronDown,
   IconChevronCompactRight,
   IconCircle,
+  IconAdjustmentsHorizontal,
+  IconFilter2,
+  IconCopy,
+  IconPercentage60,
+  IconForbidFilled,
 } from "@tabler/icons-react";
 import moment from "moment";
-
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+import { Geist, Geist_Mono } from "next/font/google";
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 import { DropdownMenuIssueAction } from "@/components/dropdown";
 import { IssueStatus } from "@/components/issue-status";
 
@@ -42,6 +55,8 @@ import { UserProfileAssign } from "@/components/profile-dropdown";
 import { TooltipMessage } from "@/components/tooltip";
 import ChatWindow from "@/components/chat";
 import { CommonDropdown } from "@/components/model/projectActionDropdown/actionDropdown";
+import { Button } from "rsuite";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 // Issue type
 interface Issue {
@@ -133,7 +148,7 @@ function SortableItem({
           onRightClick(e);
         }}
       >
-        <div className="flex space-x-1 text-sm items-center">
+        <div className="flex space-x-1 text-sm gap-2 items-center px-1">
           {/* Drag Handle */}
           <span
             className="text-gray-500 cursor-grab select-none cursor-pointer"
@@ -413,6 +428,57 @@ export function TableDemo() {
   const anchorRef = useRef<HTMLButtonElement>(null);
 
   return (
+    <>
+   <header className="bg-background sticky top-0 flex h-12 shrink-0 items-center gap-2 border-b px-4">
+              <SidebarTrigger className="-ml-0" />
+                <div className="flex justify-between items-center w-full">
+                {/* float left */}
+                <div className="float-right p-1 ml-5 gap-2 flex">
+                  <Button
+                  appearance="subtle"
+                  size="sm"
+                  title="All issue"
+                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+                  >
+                  <IconCopy size={17}/> All issue
+                  </Button>
+                  <Button
+                  appearance="subtle"
+                  size="sm"
+                  title="Action"
+                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+                  >
+                  <IconPercentage60 /> Action
+                  </Button>
+                  <Button
+                  appearance="subtle"
+                  size="sm"
+                  title="Backlogs"
+                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+                  >
+                  <IconForbidFilled /> Backlogs
+                  </Button>
+                </div>
+                {/* float right */}
+                <div className="float-left p-1 mr-5 gap-2 flex">
+                  <Button
+                  appearance="subtle"
+                  title="Filter"
+                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+                  >
+                  <IconFilter2 />
+                  </Button>
+                  <Button
+                  appearance="subtle"
+                  size="sm"
+                  title="Display"
+                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+                  >
+                  <IconAdjustmentsHorizontal /> Display
+                  </Button>
+                </div>
+                </div>
+            </header>
     <DndContext
       collisionDetection={closestCenter}
       onDragEnd={onDragEnd}
@@ -596,5 +662,6 @@ export function TableDemo() {
         )}
       </div>
     </DndContext>
+    </>
   );
 }

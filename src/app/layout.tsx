@@ -9,7 +9,7 @@ import { IconPercentage60 } from "@tabler/icons-react";
 import { IconForbidFilled } from "@tabler/icons-react";
 import { IconFilter2 } from "@tabler/icons-react";
 import { IconAdjustmentsHorizontal } from "@tabler/icons-react";
-import 'rsuite/dist/rsuite-no-reset.min.css';
+import "rsuite/dist/rsuite-no-reset.min.css";
 import { Button } from "@/components/ui/button";
 import { FilterDropdown } from "./filter-dropdown";
 const geistSans = Geist({
@@ -30,65 +30,12 @@ export const metadata: Metadata = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-<body
-  className={`${geistSans.variable} ${geistMono.variable} global-styles layoutScrollbarObtrusive content-loaded loadingText is-bootstrapped loaded bootstrap-fade-complete`}
->
-        <SidebarProvider style={{backgroundColor:'#fcfcfc'}}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} global-styles layoutScrollbarObtrusive content-loaded loadingText is-bootstrapped loaded bootstrap-fade-complete`}
+      >
+        <SidebarProvider style={{ backgroundColor: "#fcfcfc" }}>
           <AppSidebar />
-          <main className="w-full ">
-            <header className="bg-background sticky top-0 flex h-12 shrink-0 items-center gap-2 border-b px-4">
-              <SidebarTrigger className="-ml-0" />
-                <div className="flex justify-between items-center w-full">
-                {/* float left */}
-                <div className="float-right p-1 ml-5 gap-2 flex">
-                  <Button
-                  variant="outline"
-                  size="sm"
-                  title="All issue"
-                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-                  >
-                  <IconCopy size={17}/> All issue
-                  </Button>
-                  <Button
-                  variant="outline"
-                  size="sm"
-                  title="Action"
-                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-                  >
-                  <IconPercentage60 /> Action
-                  </Button>
-                  <Button
-                  variant="outline"
-                  size="sm"
-                  title="Backlogs"
-                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-                  >
-                  <IconForbidFilled /> Backlogs
-                  </Button>
-                </div>
-                {/* float right */}
-                <div className="float-left p-1 mr-5 gap-2 flex">
-                  <Button
-                  variant="outline"
-                  title="Filter"
-                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-                  >
-                  <IconFilter2 />
-                  </Button>
-                  <Button
-                  variant="outline"
-                  size="sm"
-                  title="Display"
-                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-                  >
-                  <IconAdjustmentsHorizontal /> Display
-                  </Button>
-                </div>
-                </div>
-            </header>
-
-            {children}
-          </main>
+          <main className="w-full ">{children}</main>
         </SidebarProvider>
       </body>
     </html>

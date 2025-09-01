@@ -118,6 +118,9 @@
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --color-red-500: #fb2c36;
+    --color-orange-100: #ffedd5;
+    --color-orange-500: #fe6e00;
+    --color-orange-600: #f05100;
     --color-yellow-500: #edb200;
     --color-green-500: #00c758;
     --color-blue-100: #dbeafe;
@@ -148,6 +151,10 @@
     --text-base--line-height: calc(1.5 / 1);
     --text-lg: 1.125rem;
     --text-lg--line-height: calc(1.75 / 1.125);
+    --text-xl: 1.25rem;
+    --text-xl--line-height: calc(1.75 / 1.25);
+    --text-2xl: 1.5rem;
+    --text-2xl--line-height: calc(2 / 1.5);
     --font-weight-normal: 400;
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
@@ -168,6 +175,9 @@
   @supports (color: color(display-p3 0 0 0)) {
     :root, :host {
       --color-red-500: color(display-p3 .903738 .262579 .253307);
+      --color-orange-100: color(display-p3 .988762 .931393 .843273);
+      --color-orange-500: color(display-p3 .946589 .449788 .0757345);
+      --color-orange-600: color(display-p3 .887467 .341665 .0219962);
       --color-yellow-500: color(display-p3 .903651 .703062 .0745389);
       --color-green-500: color(display-p3 .308734 .774754 .374307);
       --color-blue-100: color(display-p3 .869214 .915931 .989622);
@@ -190,6 +200,9 @@
   @supports (color: lab(0% 0 0)) {
     :root, :host {
       --color-red-500: lab(55.4814% 75.0732 48.8528);
+      --color-orange-100: lab(94.7127% 3.58394 14.3151);
+      --color-orange-500: lab(64.272% 57.1788 90.3583);
+      --color-orange-600: lab(57.1026% 64.2584 89.8886);
       --color-yellow-500: lab(76.3898% 14.5258 98.4589);
       --color-green-500: lab(70.5521% -66.5147 45.8073);
       --color-blue-100: lab(92.0301% -2.24757 -11.6453);
@@ -983,6 +996,10 @@
     margin-inline: calc(var(--spacing) * -1);
   }
 
+  .mx-1 {
+    margin-inline: calc(var(--spacing) * 1);
+  }
+
   .mx-2 {
     margin-inline: calc(var(--spacing) * 2);
   }
@@ -1023,8 +1040,16 @@
     margin-top: calc(var(--spacing) * 4);
   }
 
+  .mt-8 {
+    margin-top: calc(var(--spacing) * 8);
+  }
+
   .mt-auto {
     margin-top: auto;
+  }
+
+  .mr-1 {
+    margin-right: calc(var(--spacing) * 1);
   }
 
   .mr-2 {
@@ -1051,6 +1076,18 @@
     margin-bottom: calc(var(--spacing) * 2);
   }
 
+  .mb-4 {
+    margin-bottom: calc(var(--spacing) * 4);
+  }
+
+  .mb-6 {
+    margin-bottom: calc(var(--spacing) * 6);
+  }
+
+  .mb-8 {
+    margin-bottom: calc(var(--spacing) * 8);
+  }
+
   .-ml-0 {
     margin-left: calc(var(--spacing) * 0);
   }
@@ -1073,6 +1110,10 @@
 
   .ml-5 {
     margin-left: calc(var(--spacing) * 5);
+  }
+
+  .ml-6 {
+    margin-left: calc(var(--spacing) * 6);
   }
 
   .ml-auto {
@@ -1278,6 +1319,10 @@
     min-height: 40px;
   }
 
+  .min-h-screen {
+    min-height: 100vh;
+  }
+
   .min-h-svh {
     min-height: 100svh;
   }
@@ -1344,6 +1389,10 @@
 
   .w-72 {
     width: calc(var(--spacing) * 72);
+  }
+
+  .w-80 {
+    width: calc(var(--spacing) * 80);
   }
 
   .w-90 {
@@ -1502,6 +1551,10 @@
     cursor: pointer;
   }
 
+  .resize-none {
+    resize: none;
+  }
+
   .scroll-py-1 {
     scroll-padding-block: calc(var(--spacing) * 1);
   }
@@ -1532,6 +1585,10 @@
 
   .justify-center {
     justify-content: center;
+  }
+
+  .justify-end {
+    justify-content: flex-end;
   }
 
   .gap-1 {
@@ -1783,6 +1840,11 @@
     border-style: dashed;
   }
 
+  .border-none {
+    --tw-border-style: none;
+    border-style: none;
+  }
+
   .border-blue-400 {
     border-color: var(--color-blue-400);
   }
@@ -1815,6 +1877,10 @@
     border-top-color: rgba(0, 0, 0, 0);
   }
 
+  .bg-\[\#fafbfc\] {
+    background-color: #fafbfc;
+  }
+
   .bg-accent {
     background-color: var(--accent);
   }
@@ -1843,6 +1909,10 @@
 
   .bg-blue-500 {
     background-color: var(--color-blue-500);
+  }
+
+  .bg-blue-600 {
+    background-color: var(--color-blue-600);
   }
 
   .bg-border {
@@ -1885,6 +1955,10 @@
     .bg-muted\/50 {
       background-color: color-mix(in oklab, var(--muted) 50%, transparent);
     }
+  }
+
+  .bg-orange-100 {
+    background-color: var(--color-orange-100);
   }
 
   .bg-popover {
@@ -1983,6 +2057,18 @@
     padding-inline: calc(var(--spacing) * 6);
   }
 
+  .px-8 {
+    padding-inline: calc(var(--spacing) * 8);
+  }
+
+  .px-12 {
+    padding-inline: calc(var(--spacing) * 12);
+  }
+
+  .px-24 {
+    padding-inline: calc(var(--spacing) * 24);
+  }
+
   .py-0\.5 {
     padding-block: calc(var(--spacing) * .5);
   }
@@ -2003,8 +2089,20 @@
     padding-block: calc(var(--spacing) * 3);
   }
 
+  .py-4 {
+    padding-block: calc(var(--spacing) * 4);
+  }
+
   .py-6 {
     padding-block: calc(var(--spacing) * 6);
+  }
+
+  .py-8 {
+    padding-block: calc(var(--spacing) * 8);
+  }
+
+  .py-10 {
+    padding-block: calc(var(--spacing) * 10);
   }
 
   .pr-2 {
@@ -2027,6 +2125,11 @@
     vertical-align: middle;
   }
 
+  .text-2xl {
+    font-size: var(--text-2xl);
+    line-height: var(--tw-leading, var(--text-2xl--line-height));
+  }
+
   .text-base {
     font-size: var(--text-base);
     line-height: var(--tw-leading, var(--text-base--line-height));
@@ -2042,6 +2145,11 @@
     line-height: var(--tw-leading, var(--text-sm--line-height));
   }
 
+  .text-xl {
+    font-size: var(--text-xl);
+    line-height: var(--tw-leading, var(--text-xl--line-height));
+  }
+
   .text-xs {
     font-size: var(--text-xs);
     line-height: var(--tw-leading, var(--text-xs--line-height));
@@ -2053,6 +2161,10 @@
 
   .text-\[11px\] {
     font-size: 11px;
+  }
+
+  .text-\[15px\] {
+    font-size: 15px;
   }
 
   .leading-5 {
@@ -2147,6 +2259,14 @@
     color: var(--muted-foreground);
   }
 
+  .text-orange-500 {
+    color: var(--color-orange-500);
+  }
+
+  .text-orange-600 {
+    color: var(--color-orange-600);
+  }
+
   .text-popover-foreground {
     color: var(--popover-foreground);
   }
@@ -2209,6 +2329,10 @@
 
   .underline-offset-4 {
     text-underline-offset: 4px;
+  }
+
+  .accent-orange-500 {
+    accent-color: var(--color-orange-500);
   }
 
   .opacity-0 {
@@ -2761,6 +2885,12 @@
   @media (hover: hover) {
     .hover\:text-gray-500:hover {
       color: var(--color-gray-500);
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:text-gray-600:hover {
+      color: var(--color-gray-600);
     }
   }
 
