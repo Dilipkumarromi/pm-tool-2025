@@ -41,8 +41,7 @@ import IssueModel from "@/components/model/IssueModel";
 import { UserProfileAssign } from "@/components/profile-dropdown";
 import { TooltipMessage } from "@/components/tooltip";
 import ChatWindow from "@/components/chat";
-// import { CommonDropdown } from "@/components/model/projectActionDropdown/actionDropdown";
- 
+import { CommonDropdown } from "@/components/model/projectActionDropdown/actionDropdown";
 
 // Issue type
 interface Issue {
@@ -65,8 +64,9 @@ function SortableItem({
   onModalOpen,
   onIssuePriority,
   onChatWindow,
- // 🔹 parent passes button ref
-}: // userProfile
+  onStatus,
+}: // 🔹 parent passes button ref
+// userProfile
 {
   issue: Issue;
   sectionType: string;
@@ -74,9 +74,10 @@ function SortableItem({
   onStatusClick: (issue: Issue) => void;
   isDragging: boolean;
   onModalOpen: (size?: string) => void;
-  onIssuePriority: () => void;
+  onIssuePriority: (e: React.MouseEvent) => void;
   onChatWindow: () => void;
-    // 🔹 optional ref for dropdown
+  onStatus: (e: React.MouseEvent) => void;
+  // 🔹 optional ref for dropdown
   // userProfile: (size?: string) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -136,7 +137,7 @@ function SortableItem({
           {/* Drag Handle */}
           <span
             className="text-gray-500 cursor-grab select-none cursor-pointer"
-            onClick={() => onIssuePriority()}
+            onClick={onIssuePriority}
           >
             ---
           </span>
@@ -149,7 +150,7 @@ function SortableItem({
             className="text-gray-500 text-sm cursor-pointer"
             onClick={() => onStatusClick(issue)}
           >
-            <IconCircle size={17} />
+            <IconCircle size={17} onClick={onStatus}/>
           </span>
 
           {/* Title & Description */}
@@ -388,12 +389,12 @@ export function TableDemo() {
   const [modalSize, setModalSize] = useState("md");
   const [openChat, setOpenChat] = useState(false);
   const [priorityOpen, setPriorityOpen] = useState(false);
-  const [value, setValue] = useState("")
+  const [value, setValue] = useState("");
   const handleOpenModal = (size = "md") => {
     setModalSize(size);
     setModalOpen(true);
   };
-  
+
   const handleCloseModal = () => {
     setModalOpen(false);
   };
@@ -403,7 +404,13 @@ export function TableDemo() {
   const chatWindow = () => {
     setOpenChat(true);
   };
-  const anchorRef = useRef<HTMLButtonElement>(null) 
+  const [priorityDropdownPos, setPriorityDropdownPos] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
+  const anchorRef = useRef<HTMLButtonElement>(null);
+
   return (
     <DndContext
       collisionDetection={closestCenter}
@@ -463,8 +470,26 @@ export function TableDemo() {
                           isDragging={activeId === issue.id.toString()}
                           onModalOpen={handleOpenModal}
                           onChatWindow={chatWindow}
-                          onIssuePriority={() => setPriorityOpen((prev) => !prev)} 
-                          
+                          onIssuePriority={(e) => {
+                            const rect = (
+                              e.target as HTMLElement
+                            ).getBoundingClientRect();
+                            setPriorityDropdownPos({
+                              x: rect.left,
+                              y: rect.bottom,
+                            });
+                            setPriorityOpen(true);
+                          }}
+                          onStatus={(e) => {
+                            const rect = (
+                              e.target as HTMLElement
+                            ).getBoundingClientRect();
+                            setPriorityDropdownPos({
+                              x: rect.left,
+                              y: rect.bottom,
+                            });
+                            setPriorityOpen(true);
+                          }}
                           // userProfile={setUserProfile("sm")}
                         />
                       ))
@@ -540,10 +565,23 @@ export function TableDemo() {
           />
         )}
         {/* IssuePriority dropdown, controlled by parent */}
-        {/* {
-          priorityOpen && ( <CommonDropdown />)
-        } */}
-       
+        {priorityOpen && priorityDropdownPos && (
+          <CommonDropdown
+            open={priorityOpen}
+            frameworks={[
+              { value: "low", label: "Low" },
+              { value: "medium", label: "Medium" },
+              { value: "high", label: "High" },
+            ]}
+            onOpenChange={setPriorityOpen}
+            style={{
+              position: "absolute",
+              zIndex: 50,
+              left: priorityDropdownPos.x,
+              top: priorityDropdownPos.y,
+            }}
+          />
+        )}
       </div>
     </DndContext>
   );

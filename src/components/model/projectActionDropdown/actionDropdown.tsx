@@ -19,49 +19,45 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-]
+// const frameworks = [
+//   {
+//     value: "next.js",
+//     label: "Next.js",
+//   },
+//   {
+//     value: "sveltekit",
+//     label: "SvelteKit",
+//   },
+//   {
+//     value: "nuxt.js",
+//     label: "Nuxt.js",
+//   },
+//   {
+//     value: "remix",
+//     label: "Remix",
+//   },
+//   {
+//     value: "astro",
+//     label: "Astro",
+//   },
+// ]
 
-export function CommonDropdown() {
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
+export function CommonDropdown({
+  open,
+  onOpenChange,
+  style,
+  frameworks
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  style?: React.CSSProperties;
+  frameworks: { value: string; label: string }[];
+}) {
+  const [value, setValue] = React.useState("");
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[200px] justify-between"
-        >
-          {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : "Select framework..."}
-          <ChevronsUpDown className="opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+    <Popover open={open} onOpenChange={onOpenChange}>
+      <PopoverContent className="w-[200px] p-0" style={style}>
         <Command>
           <CommandInput placeholder="Search framework..." className="h-9" />
           <CommandList>
@@ -72,8 +68,8 @@ export function CommonDropdown() {
                   key={framework.value}
                   value={framework.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue)
-                    setOpen(false)
+                    setValue(currentValue === value ? "" : currentValue);
+                    onOpenChange(false);
                   }}
                 >
                   {framework.label}
@@ -90,5 +86,5 @@ export function CommonDropdown() {
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }
