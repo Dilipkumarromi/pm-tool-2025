@@ -1,17 +1,18 @@
+"use client"
 import React from "react";
-
+import { PriorityProvider, PriorityCommand, usePriority } from "./Priority-command"
 declare global {
   interface Window {
     tiptapEditor: any;
   }
 }
+
 import {
   Modal,
   Button,
   Input,
   Toggle,
   ButtonToolbar,
-  Dropdown,
   TagGroup,
   Tag,
 } from "rsuite";
@@ -26,28 +27,71 @@ import Image from "@tiptap/extension-image";
 import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 
-// Import your CSS file
-import "./modelStyle.css"; // Ensure this path matches the file location
-// import ActionDropdown from "./projectActionDropdown/actionDropdown";
+// shadcn command
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+
+import "./modelStyle.css";
 
 export default function IssueModel() {
   const [open, setOpen] = React.useState(false);
+  const [commandOpen, setCommandOpen] = React.useState(false);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const buttonOne=[
-      { key: 1, value: "backlog", label: "Backlog", count: 1 },
-      { key: 2, value: "todo", label: "Todo", count: 2 },
-      { key: 3, value: "in-progress", label: "In Progress", count: 3 },
-      { key: 4, value: "done", label: "Done", count: 4 },
-      { key: 5, value: "cancel", label: "Cancel", count: 5 },
-      { key: 6, value: "duplicate", label: "Duplicate", count: 6 },
-    ]
+
+  // ⌨️ Keyboard shortcut listener (Ctrl+K or Cmd+K)
+  React.useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setCommandOpen((prev) => !prev);
+      }
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
+
+  const buttonOne = [
+    { key: 1, value: "backlog", label: "Backlog", count: 1 },
+    { key: 2, value: "todo", label: "Todo", count: 2 },
+    { key: 3, value: "in-progress", label: "In Progress", count: 3 },
+    { key: 4, value: "done", label: "Done", count: 4 },
+    { key: 5, value: "cancel", label: "Cancel", count: 5 },
+    { key: 6, value: "duplicate", label: "Duplicate", count: 6 },
+  ];
+
   return (
     <>
       <Button appearance="primary" onClick={handleOpen}>
         Open Modal
       </Button>
 
+      {/* 🔎 Command Palette */}
+      <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
+        <CommandInput placeholder="Type a command..." />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Actions">
+            <CommandItem
+              onSelect={() => {
+                setCommandOpen(false);
+                handleOpen(); // 🎯 open modal from command
+              }}
+            >
+              Open Issue Modal
+            </CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
+
+      {/* Existing RSuite Modal (unchanged) */}
       <Modal
         size="md"
         open={open}
@@ -76,7 +120,6 @@ export default function IssueModel() {
               top: 0,
               background: "#fff",
               zIndex: 2,
-              // maxHeight:"300px"
             }}
           >
             <input
@@ -90,22 +133,10 @@ export default function IssueModel() {
                 padding: "10px 0px",
               }}
               placeholder="Enter issue title here..."
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  // Assuming that the Tiptap editor instance is globally accessible
-                  // working like tab
-                }
-              }}
             />
           </div>
           <div style={{ position: "relative", height: "100%" }}>
-            <div
-              style={{
-                paddingBottom: "25px",
-                overflowY: "-moz-hidden-unscrollable",
-              }}
-            >
+            <div style={{ paddingBottom: "25px" }}>
               <Tiptap />
             </div>
             <div
@@ -117,32 +148,7 @@ export default function IssueModel() {
                 padding: "10px 20px 70px ",
               }}
             >
-                
               <ButtonToolbar style={{ marginBottom: "10px", height: "40px" }}>
-                {/* <Dropdown
-                  placement="bottomStart"
-                  trigger="click"
-                  container={() => document.body}
-                  renderToggle={(props, ref) => {
-                    const { container, menuClassName, ...buttonProps }: any =
-                      props;
-                    return (
-                      <span ref={ref}>
-                        <Button
-                          {...buttonProps}
-                          startIcon={<GearIcon />}
-                          size="sm"
-                        >
-                          Priority
-                        </Button>
-                      </span>
-                    );
-                  }}
-                  menuClassName="action-dropdown-menu-above-modal"
-                >
-                  <ActionDropdown />
-                </Dropdown> */}
-                {/* <ActionDropdown data={buttonOne} style={{ marginRight: "8px" }} /> */}
                 <Button startIcon={<GearIcon />} size="md" style={{ marginRight: "8px" }}>
                   Assign
                 </Button>
@@ -186,7 +192,7 @@ const Tiptap = () => {
       Text,
       Image,
       FileHandler.configure({
-        allowedMimeTypes: ["*/*"], // Allow all file types
+        allowedMimeTypes: ["*/*"],
         onDrop: (currentEditor, files, pos) => {
           files.forEach((file) => {
             const fileReader = new FileReader();
@@ -229,14 +235,6 @@ const Tiptap = () => {
         placeholder: "Write something …",
       }),
     ],
-    onUpdate: ({ editor }) => {
-      const dom = editor.view.dom;
-      if (editor.getText().trim().length > 0) {
-        dom.style.marginBottom = "0px";
-      } else {
-        dom.style.marginBottom = "0px";
-      }
-    },
     editorProps: {
       attributes: {
         style:
@@ -249,4 +247,4 @@ const Tiptap = () => {
 
   return <EditorContent editor={editor} />;
 };
-
+ 

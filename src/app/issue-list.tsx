@@ -1,7 +1,16 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React, { useRef, useState } from "react";
-import { CircleDotDashed, Cable, CircleFadingPlus,ListPlus, PlusCircle,MessageCircle} from "lucide-react";
+import {
+  CircleDotDashed,
+  Cable,
+  CircleFadingPlus,
+  ListPlus,
+  PlusCircle,
+  MessageCircle,
+} from "lucide-react";
+
 import {
   DndContext,
   closestCenter,
@@ -10,16 +19,14 @@ import {
   DragOverlay,
   useDroppable,
 } from "@dnd-kit/core";
-import { AlertCircleIcon, BadgeCheckIcon, CheckIcon } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
- 
+import { Badge } from "@/components/ui/badge";
+
 import {
   SortableContext,
   verticalListSortingStrategy,
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Dropdown, Avatar, HStack } from "rsuite";
 import {
   IconChevronDown,
   IconChevronCompactRight,
@@ -32,9 +39,10 @@ import { IssueStatus } from "@/components/issue-status";
 
 import IssueModel from "@/components/model/IssueModel";
 import { UserProfileAssign } from "@/components/profile-dropdown";
-import { IssuePriority } from "@/components/issue-priority";
 import { TooltipMessage } from "@/components/tooltip";
 import ChatWindow from "@/components/chat";
+// import { CommonDropdown } from "@/components/model/projectActionDropdown/actionDropdown";
+ 
 
 // Issue type
 interface Issue {
@@ -56,7 +64,8 @@ function SortableItem({
   isDragging,
   onModalOpen,
   onIssuePriority,
-  onChatWindow
+  onChatWindow,
+ // 🔹 parent passes button ref
 }: // userProfile
 {
   issue: Issue;
@@ -65,8 +74,9 @@ function SortableItem({
   onStatusClick: (issue: Issue) => void;
   isDragging: boolean;
   onModalOpen: (size?: string) => void;
-  onIssuePriority:() => void
-  onChatWindow:() => void
+  onIssuePriority: () => void;
+  onChatWindow: () => void;
+    // 🔹 optional ref for dropdown
   // userProfile: (size?: string) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -108,7 +118,7 @@ function SortableItem({
       key: 4,
     },
   ];
-  
+
   return (
     <>
       <li
@@ -124,7 +134,12 @@ function SortableItem({
       >
         <div className="flex space-x-1 text-sm items-center">
           {/* Drag Handle */}
-          <span className="text-gray-500 cursor-grab select-none cursor-pointer" onClick={()=>onIssuePriority()}>---</span>
+          <span
+            className="text-gray-500 cursor-grab select-none cursor-pointer"
+            onClick={() => onIssuePriority()}
+          >
+            ---
+          </span>
 
           {/* Static ID */}
           <span className="text-gray-500 text-sm">STU-{issue.id}</span>
@@ -145,29 +160,26 @@ function SortableItem({
           >
             {issue.title}
           </span>
-          
+
           <span className="text-gray-500 text-sm">{issue.description}</span>
-        
+
           {/* Cable Icon Button */}
-          
           <span
             className="m-1 ml-4  cursor-pointer"
             onClick={() => {
-              onStatusClick(issue);   // keep your existing logic
-              onChatWindow();         // also open chat window
+              onStatusClick(issue); // keep your existing logic
+              onChatWindow(); // also open chat window
             }}
           >
-           
-           <TooltipMessage message="Group Decurion?">
-            <MessageCircle size={15} />
-             
+            <TooltipMessage message="Group Decurion?">
+              <MessageCircle size={15} />
             </TooltipMessage>
           </span>
         </div>
 
         <div className="flex items-center space-x-1 text-gray-500 text-md">
           {/* <CircleFadingPlus size={15} className="cursor-pointer" /> */}
-          <UserProfileAssign/>
+          <UserProfileAssign />
           <span className="text-sm">{issue.createdAt}</span>
         </div>
       </li>
@@ -374,25 +386,24 @@ export function TableDemo() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalSize, setModalSize] = useState("md");
-  const [userProfile, setUserProfile] = useState(false);
-  const [openChat, setOpenChat] = useState(false)
-  const [open, setOpen] = React.useState(false)
+  const [openChat, setOpenChat] = useState(false);
+  const [priorityOpen, setPriorityOpen] = useState(false);
+  const [value, setValue] = useState("")
   const handleOpenModal = (size = "md") => {
     setModalSize(size);
     setModalOpen(true);
   };
-  const IssuePriority = () => {
-    console.log(">>>issue priority")
-    setOpen(true);
-  };
+  
   const handleCloseModal = () => {
     setModalOpen(false);
   };
-  const modalRef = useRef<{ openModal: () => void; closeModal: () => void }>(null);
-  const chatWindow=()=>{
-    setOpenChat(true)
-    console.log(">>>chat window")
-  }
+  const modalRef = useRef<{ openModal: () => void; closeModal: () => void }>(
+    null
+  );
+  const chatWindow = () => {
+    setOpenChat(true);
+  };
+  const anchorRef = useRef<HTMLButtonElement>(null) 
   return (
     <DndContext
       collisionDetection={closestCenter}
@@ -418,18 +429,21 @@ export function TableDemo() {
                     ) : (
                       <IconChevronCompactRight size={12} />
                     )}
-                   
+
                     <span className="text-sm font-semibold ml-2 capitalize">
                       {section.type} {section.issue_list.length}
                     </span>
                   </span>
                 </span>
               </div>
-               
-              <button className="text-md text-gray-500 hover:text-gray-500 flex items-center" onClick={() => modalRef.current?.openModal()}>
+
+              <button
+                className="text-md text-gray-500 hover:text-gray-500 flex items-center"
+                onClick={() => modalRef.current?.openModal()}
+              >
                 {/* <span className="material-icons mr-5 cursor-pointer">+</span> */}
-                  <TooltipMessage message="Add task">
-                <ListPlus size={20} className="cursor-pointer mr-4"/>
+                <TooltipMessage message="Add task">
+                  <ListPlus size={20} className="cursor-pointer mr-4" />
                 </TooltipMessage>
               </button>
             </div>
@@ -448,8 +462,9 @@ export function TableDemo() {
                           onStatusClick={handleStatusClick}
                           isDragging={activeId === issue.id.toString()}
                           onModalOpen={handleOpenModal}
-                          onIssuePriority={IssuePriority} 
                           onChatWindow={chatWindow}
+                          onIssuePriority={() => setPriorityOpen((prev) => !prev)} 
+                          
                           // userProfile={setUserProfile("sm")}
                         />
                       ))
@@ -508,26 +523,27 @@ export function TableDemo() {
         </DragOverlay>
 
         <IssueModel ref={modalRef} />
+        {openChat && (
+          <ChatWindow
+            chatType="group" // or "single"
+            chatName="Project Group"
+            avatar="https://i.pravatar.cc/40?img=52"
+            members={[
+              {
+                id: 1,
+                name: "Alice",
+                avatar: "https://i.pravatar.cc/40?img=40",
+              },
+              { id: 2, name: "Bob", avatar: "https://i.pravatar.cc/40?img=50" },
+            ]}
+            onClose={() => setOpenChat(false)}
+          />
+        )}
+        {/* IssuePriority dropdown, controlled by parent */}
         {/* {
-          open&&(
-            <IssuePriority open={open} onOpenChange={setOpen}/>
-          )
+          priorityOpen && ( <CommonDropdown />)
         } */}
-       {openChat && (
-        <ChatWindow
-          chatType="group" // or "single"
-          chatName="Project Group"
-          avatar="https://i.pravatar.cc/40?img=52"
-          members={[
-            { id: 1, name: "Alice", avatar: "https://i.pravatar.cc/40?img=40" },
-            { id: 2, name: "Bob", avatar: "https://i.pravatar.cc/40?img=50" },
-          ]}
-          onClose={() => setOpenChat(false)}
-        />
-      )}
-      {/* {open&&(
-        <IssuePriority />
-      )} */}
+       
       </div>
     </DndContext>
   );

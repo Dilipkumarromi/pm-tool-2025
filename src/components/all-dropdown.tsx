@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+"use client";
+
+import React, { useState } from "react";
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandSeparator,
+} from "@/components/ui/command";
 
 const statuses = [
-  { id: 1, name: 'Backlog', icon: 'loading' },
-  { id: 2, name: 'Todo', icon: 'circle' },
-  { id: 3, name: 'In Progress', icon: 'dot-yellow' },
-  { id: 4, name: 'Done', icon: 'check' },
-  { id: 5, name: 'Canceled', icon: 'x' },
-  { id: 6, name: 'Duplicate', icon: 'x' },
+  { id: 1, name: "Backlog", icon: "loading" },
+  { id: 2, name: "Todo", icon: "circle" },
+  { id: 3, name: "In Progress", icon: "dot-yellow" },
+  { id: 4, name: "Done", icon: "check" },
+  { id: 5, name: "Canceled", icon: "x" },
+  { id: 6, name: "Duplicate", icon: "x" },
 ];
 
 interface Status {
@@ -21,19 +32,21 @@ interface AllDropdownProps {
 
 const AllDropdown: React.FC<AllDropdownProps> = ({ isOpen }) => {
   const [open, setOpen] = useState<boolean>(isOpen);
-  const [selectedStatus, setSelectedStatus] = useState<number>(1); // Default to Backlog
+  const [selectedStatus, setSelectedStatus] = useState<number>(1); // Default Backlog
 
   const getIcon = (status: Status): React.ReactNode => {
     switch (status.icon) {
-      case 'loading':
-        return <span className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-transparent"></span>;
-      case 'circle':
+      case "loading":
+        return (
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-transparent"></span>
+        );
+      case "circle":
         return <span className="h-3 w-3 rounded-full border-2 border-gray-500"></span>;
-      case 'dot-yellow':
+      case "dot-yellow":
         return <span className="text-yellow-500 text-lg">●</span>;
-      case 'check':
+      case "check":
         return <span className="text-blue-600">✔</span>;
-      case 'x':
+      case "x":
         return <span className="text-gray-400 text-lg">✕</span>;
       default:
         return null;
@@ -41,37 +54,54 @@ const AllDropdown: React.FC<AllDropdownProps> = ({ isOpen }) => {
   };
 
   return (
-    <div className="relative inline-block text-right">
+    <div className="relative inline-block text-left w-56">
       {/* Toggle Button */}
-      
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between rounded-md border px-3 py-2 text-sm shadow-sm bg-white hover:bg-gray-50"
+      >
+        <span className="flex items-center gap-2">
+          {getIcon(statuses.find((s) => s.id === selectedStatus)!)}
+          {statuses.find((s) => s.id === selectedStatus)?.name}
+        </span>
+        <span className="text-gray-400 text-xs">⌘K</span>
+      </button>
 
       {/* Dropdown */}
       {open && (
-      <div className="absolute z-10 mt-2 w-52 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 right-0">
-        <ul className="py-1 text-sm text-gray-700">
-        {statuses.map((status: Status) => (
-          <li
-          key={status.id}
-          onClick={() => {
-            setSelectedStatus(status.id);
-            setOpen(false);
-          }}
-          className={`flex cursor-pointer items-center justify-between px-4 py-2 ${
-            selectedStatus === status.id ? 'bg-gray-100 font-medium' : 'hover:bg-gray-50'
-          }`}
-          >
-          <div className="flex items-center gap-2">
-            {getIcon(status)}
-            <span>{status.name}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            {selectedStatus === status.id && <span className="text-gray-500">✔</span>}
-            <span className="text-xs text-gray-400">{status.id}</span>
-          </div>
-          </li>
-        ))}
-        </ul>
-      </div>
+        <div className="absolute z-50 mt-2 w-full rounded-md border bg-white shadow-md">
+          <Command>
+            <CommandInput placeholder="Set status to..." />
+            <CommandList>
+              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandGroup>
+                {statuses.map((status: Status) => (
+                  <CommandItem
+                    key={status.id}
+                    value={status.name}
+                    onSelect={() => {
+                      setSelectedStatus(status.id);
+                      setOpen(false);
+                    }}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      {getIcon(status)}
+                      <span>{status.name}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {selectedStatus === status.id && (
+                        <span className="text-gray-500">✔</span>
+                      )}
+                      <span className="text-xs text-gray-400">{status.id}</span>
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+              <CommandSeparator />
+            </CommandList>
+          </Command>
+        </div>
       )}
     </div>
   );

@@ -45,6 +45,7 @@ export default function ChatWindow({
   const [dropdownMessageId, setDropdownMessageId] = useState<number | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Scroll to latest message
   useEffect(() => {
@@ -131,7 +132,6 @@ export default function ChatWindow({
   };
 
   const handleDeleteForMe = (id: number) => {
-    // Replace with "This message was deleted" only for me
     setMessages(
       messages.map((msg) =>
         msg.id === id ? { ...msg, text: "Message deleted for me" } : msg
@@ -139,8 +139,20 @@ export default function ChatWindow({
     );
     setDropdownMessageId(null);
   };
+
+  // ✅ Handle long press on message
+  const startLongPress = (id: number) => {
+    longPressTimer.current = setTimeout(() => {
+      setDropdownMessageId(id);
+    }, 600); // hold 600ms
+  };
+
+  const endLongPress = () => {
+    if (longPressTimer.current) clearTimeout(longPressTimer.current);
+  };
+
   return (
-    <div className="fixed bottom-0 right-6 w-80 bg-white shadow-lg rounded-t-lg border flex flex-col">
+    <div className="fixed bottom-0 right-6 w-90 bg-white shadow-lg rounded-t-lg border flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between bg-blue-400 text-white p-1 rounded-t-lg relative">
         <div className="flex items-center gap-2">
@@ -222,7 +234,12 @@ export default function ChatWindow({
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className="flex flex-col items-start border-l-2 border-transparent hover:border-blue-300 p-1"
+            className="flex flex-col items-start border-l-2 border-transparent hover:border-blue-300 p-1 relative"
+            onMouseDown={() => startLongPress(msg.id)}
+            onMouseUp={endLongPress}
+            onMouseLeave={endLongPress}
+            onTouchStart={() => startLongPress(msg.id)}
+            onTouchEnd={endLongPress}
           >
             {msg.replyTo && (
               <div className="text-xs bg-gray-200 px-2 py-1 rounded mb-1 text-gray-600">
@@ -248,7 +265,24 @@ export default function ChatWindow({
                 ↩ Reply
               </button>
             </div>
-            
+
+            {/* ✅ Dropdown for delete options */}
+            {dropdownMessageId === msg.id && (
+              <div className="absolute top-6 left-10 bg-white border shadow rounded text-xs z-50">
+                <button
+                  className="block w-full px-3 py-1 hover:bg-gray-100 text-red-500"
+                  onClick={() => handleDeleteForEveryone(msg.id)}
+                >
+                  Delete for Everyone
+                </button>
+                <button
+                  className="block w-full px-3 py-1 hover:bg-gray-100"
+                  onClick={() => handleDeleteForMe(msg.id)}
+                >
+                  Delete for Me
+                </button>
+              </div>
+            )}
           </div>
         ))}
         <div ref={messagesEndRef} />

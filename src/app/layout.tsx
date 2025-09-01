@@ -35,7 +35,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 >
         <SidebarProvider style={{backgroundColor:'#fcfcfc'}}>
           <AppSidebar />
-          <main className="w-full" >
+          <main className="w-full ">
             <header className="bg-background sticky top-0 flex h-12 shrink-0 items-center gap-2 border-b px-4">
               <SidebarTrigger className="-ml-0" />
                 <div className="flex justify-between items-center w-full">

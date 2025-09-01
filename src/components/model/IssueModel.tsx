@@ -30,7 +30,7 @@ import Text from "@tiptap/extension-text";
 
 // Import your CSS file
 import "./modelStyle.css"; // Ensure this path matches the file location
-import ActionDropdown from "./projectActionDropdown/actionDropdown";
+import ActionDropdown from "./projectActionDropdown/actionDropdown1";
 import EditText from "./projectActionDropdown/edit-text";
 interface IssueModelRef {
   openModal: () => void;
@@ -39,7 +39,7 @@ interface IssueModelRef {
 
 const IssueModel = forwardRef<IssueModelRef>((_props, ref) => {
   const [open, setOpen] = useState(false);
-
+  const [drpOpen, setDrpOpen] = React.useState(false)
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -96,7 +96,8 @@ const IssueModel = forwardRef<IssueModelRef>((_props, ref) => {
               }}
             >
               <ButtonToolbar style={{ marginBottom: "12px", height: "40px" }}>
-                <ActionDropdown data={buttonOne} />
+                {/* <ActionDropdown data={buttonOne} /> */}
+                <ActionDropdown data={buttonOne} open={drpOpen} setOpen={setDrpOpen} />
                 <Button startIcon={<GearIcon />} size="sm">
                   Assign
                 </Button>

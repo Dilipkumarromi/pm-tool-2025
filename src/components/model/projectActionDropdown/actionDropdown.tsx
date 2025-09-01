@@ -1,79 +1,94 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React,{useState} from 'react';
-import {
-  Modal,
-  Button,
-  Input,
-  Toggle,
-  ButtonToolbar,
-  Dropdown,
-  TagGroup,
-  Tag,
-} from "rsuite";
-import GearIcon from "@rsuite/icons/Gear";
-import "./style.css"
-const ActionDropdown = ({ data }:any) => {
-  const dropdownOptions = data;
-  const [selectedLabel, setSelectedLabel] = useState('Change status...');
-  return (
-    <div>
-      <div className="relative ">
-         
-        <Dropdown
-          placement="bottomStart"
-          trigger="click"
-          container={() => document.body}
-          onSelect={(eventKey: any) => {
-            const selectedItem = dropdownOptions.find((item: any) => item.value === eventKey);
-            if (selectedItem) {
-              setSelectedLabel(selectedItem.label);
-            }
-          }}
-          renderToggle={(props, ref) => {
-            const { container, menuClassName, ...buttonProps }: any = props;
-            return (
-              <span ref={ref}>
-                <Button
-                  {...buttonProps}
-                  startIcon={<GearIcon />}
-                  size="sm"
-                  className="px-4 py-2"
-                >
-                  {selectedLabel}
-                </Button>
-              </span>
-            );
-          }}
-          menuClassName="action-dropdown-menu-above-modal"
-        >
-          {dropdownOptions.map((item: any) => (
-            <Dropdown.Item
-              key={item.key}
-              eventKey={item.value}
-              className="flex items-center"
-            >
-              <div className="flex items-center" style={{ gap: '1px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', width: '150px' }}>
-                <span style={{ padding: '3px' }} className="text-gray-500 text-sm">
-                  <GearIcon />
-                </span>
-                <span
-                  style={{ padding: '3px', textAlign: 'left', flex: 1 }}
-                  className={item.active ? "text-blue-500 text-sm" : "text-gray-800 text-sm"}
-                >
-                  {item.label}
-                </span>
-                <span style={{ padding: '3px' }} className="text-gray-500 text-sm">
-                  {item.count}
-                </span>
-              </div>
-              </div>
-            </Dropdown.Item>
-          ))}
-        </Dropdown>
-      </div>
-    </div>
-  );
-};
+"use client"
 
-export default ActionDropdown;
+import * as React from "react"
+import { Check, ChevronsUpDown } from "lucide-react"
+
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
+const frameworks = [
+  {
+    value: "next.js",
+    label: "Next.js",
+  },
+  {
+    value: "sveltekit",
+    label: "SvelteKit",
+  },
+  {
+    value: "nuxt.js",
+    label: "Nuxt.js",
+  },
+  {
+    value: "remix",
+    label: "Remix",
+  },
+  {
+    value: "astro",
+    label: "Astro",
+  },
+]
+
+export function CommonDropdown() {
+  const [open, setOpen] = React.useState(false)
+  const [value, setValue] = React.useState("")
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-[200px] justify-between"
+        >
+          {value
+            ? frameworks.find((framework) => framework.value === value)?.label
+            : "Select framework..."}
+          <ChevronsUpDown className="opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0">
+        <Command>
+          <CommandInput placeholder="Search framework..." className="h-9" />
+          <CommandList>
+            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandGroup>
+              {frameworks.map((framework) => (
+                <CommandItem
+                  key={framework.value}
+                  value={framework.value}
+                  onSelect={(currentValue) => {
+                    setValue(currentValue === value ? "" : currentValue)
+                    setOpen(false)
+                  }}
+                >
+                  {framework.label}
+                  <Check
+                    className={cn(
+                      "ml-auto",
+                      value === framework.value ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  )
+}
