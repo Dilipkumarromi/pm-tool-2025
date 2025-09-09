@@ -47,6 +47,7 @@ import ChatWindow from "@/components/chat";
 import { CommonDropdown } from "@/components/model/projectActionDropdown/actionDropdown";
 import { Button } from "rsuite";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { encryptQuery } from "@/lib/encryption";
 
 // Issue type
 interface Issue {
@@ -102,7 +103,8 @@ function SortableItem({
   };
 
   const handleNavigate = (id: number) => {
-    router.push(`/issue-details/${id}`);
+    
+    router.push(`/issue-details/${encodeURI(encryptQuery(id))}`);
   };
 
   return (
