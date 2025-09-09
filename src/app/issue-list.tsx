@@ -10,6 +10,7 @@ import {
   MessageCircle,
   Move,
   CircleX,
+  Headset
 } from "lucide-react";
 import "./new-globals.css";
 import {
@@ -102,7 +103,7 @@ function SortableItem({
     boxShadow: transform ? "0 4px 8px rgba(96, 165, 250, 0.4)" : "none",
   };
 
-  const handleNavigate = (id: number) => {
+  const handleNavigate = (id: number):any => {
     
     router.push(`/issue-details/${encodeURI(encryptQuery(id))}`);
   };
@@ -158,15 +159,16 @@ function SortableItem({
 
         {/* Cable Icon Button */}
         <span
-          className="m-1 ml-4 cursor-pointer"
+          className="m-1 ml-2 cursor-pointer"
           onClick={() => {
             onStatusClick(issue);
             onChatWindow();
           }}
         >
-          <TooltipMessage message="Group Decurion?">
-            <MessageCircle size={15} />
-          </TooltipMessage>
+          <Headset size={15} color="green"/>
+          {/* <TooltipMessage message="Group Decurion?">
+            
+          </TooltipMessage> */}
         </span>
       </div>
 
