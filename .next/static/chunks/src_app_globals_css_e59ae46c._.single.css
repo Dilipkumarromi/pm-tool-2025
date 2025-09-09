@@ -1412,6 +1412,10 @@
     max-width: 70%;
   }
 
+  .max-w-\[240px\] {
+    max-width: 240px;
+  }
+
   .max-w-\[calc\(100\%-2rem\)\] {
     max-width: calc(100% - 2rem);
   }
@@ -1517,6 +1521,10 @@
 
   .animate-spin {
     animation: var(--animate-spin);
+  }
+
+  .cursor-all-scroll {
+    cursor: all-scroll;
   }
 
   .cursor-default {

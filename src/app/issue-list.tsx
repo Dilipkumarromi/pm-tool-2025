@@ -1,8 +1,6 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React, { useRef, useState } from "react";
-import router, { useRouter } from 'next/router';
+import { useRouter } from "next/navigation"; // <- fixed import
 import {
   CircleDotDashed,
   Cable,
@@ -10,6 +8,7 @@ import {
   ListPlus,
   PlusCircle,
   MessageCircle,
+  Move,
 } from "lucide-react";
 import "./new-globals.css";
 import {
@@ -39,15 +38,18 @@ import {
   IconForbidFilled,
 } from "@tabler/icons-react";
 import moment from "moment";
+
+// Font imports reordered (keeps original intent but avoids runtime error)
+import { Geist, Geist_Mono } from "next/font/google";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
-import { Geist, Geist_Mono } from "next/font/google";
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
 import { DropdownMenuIssueAction } from "@/components/dropdown";
 import { IssueStatus } from "@/components/issue-status";
 
@@ -81,9 +83,7 @@ function SortableItem({
   onIssuePriority,
   onChatWindow,
   onStatus,
-}: // 🔹 parent passes button ref
-// userProfile
-{
+}: {
   issue: Issue;
   sectionType: string;
   onRightClick: (e: React.MouseEvent) => void;
@@ -93,8 +93,6 @@ function SortableItem({
   onIssuePriority: (e: React.MouseEvent) => void;
   onChatWindow: () => void;
   onStatus: (e: React.MouseEvent) => void;
-  // 🔹 optional ref for dropdown
-  // userProfile: (size?: string) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({
@@ -105,6 +103,9 @@ function SortableItem({
       },
     });
 
+  // useRouter hook used here so navigation works correctly
+  const router = useRouter();
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -113,6 +114,7 @@ function SortableItem({
     border: transform ? "1px dashed #60a5fa" : "none",
     boxShadow: transform ? "0 4px 8px rgba(96, 165, 250, 0.4)" : "none",
   };
+
   const items1 = [
     {
       label: "No assignee",
@@ -136,10 +138,14 @@ function SortableItem({
     },
   ];
 
-  const handleNavigate = (id) => {
-    console.log("button click event")
+  // Navigation handler uses router from next/navigation
+  const handleNavigate = (id: number) => {
+    // keep the existing console.log for debugging
+    console.log("button click event", id);
+    // push to issue-details route
     router.push(`/issue-details/${id}`);
   };
+
   return (
     <>
       <li
@@ -163,22 +169,27 @@ function SortableItem({
           </span>
 
           {/* Static ID */}
-          <span className="text-gray-500 text-sm">STU-{issue.id}</span>
+          <span
+            className="text-gray-500 text-sm cursor-all-scroll"
+            {...attributes}
+            {...listeners}
+            aria-describedby={`DndDescribedBy-${issue.id}`} // make describedBy deterministic to avoid hydration mismatch
+          >
+            STU-{issue.id}
+          </span>
 
           {/* Status Circle Icon */}
           <span
             className="text-gray-500 text-sm cursor-pointer"
             onClick={() => onStatusClick(issue)}
           >
-            <IconCircle size={17} onClick={onStatus}/>
+            <IconCircle size={17} onClick={onStatus} />
           </span>
 
           {/* Title & Description */}
           <span
-            className="text-gray-800 text-sm"
-            {...attributes}
-            {...listeners}
-            // onClick={() => handleNavigate(2)}
+            className="text-gray-800 text-sm cursor-pointer"
+            onClick={() => handleNavigate(issue.id)} // <-- fixed: dynamic id
           >
             {issue.title}
           </span>
@@ -435,239 +446,246 @@ export function TableDemo() {
 
   return (
     <>
-   <header className="bg-background sticky top-0 flex h-12 shrink-0 items-center gap-2 border-b px-4">
-              <SidebarTrigger className="-ml-0" />
-                <div className="flex justify-between items-center w-full">
-                {/* float left */}
-                <div className="float-right p-1 ml-5 gap-2 flex">
-                  <Button
-                  appearance="subtle"
-                  size="sm"
-                  title="All issue"
-                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+      <header className="bg-background sticky top-0 flex h-12 shrink-0 items-center gap-2 border-b px-4">
+        <SidebarTrigger className="-ml-0" />
+        <div className="flex justify-between items-center w-full">
+          {/* float left */}
+          <div className="float-right p-1 ml-5 gap-2 flex">
+            <Button
+              appearance="subtle"
+              size="sm"
+              title="All issue"
+              className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+            >
+              <IconCopy size={17} /> All issue
+            </Button>
+            <Button
+              appearance="subtle"
+              size="sm"
+              title="Action"
+              className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+            >
+              <IconPercentage60 /> Action
+            </Button>
+            <Button
+              appearance="subtle"
+              size="sm"
+              title="Backlogs"
+              className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+            >
+              <IconForbidFilled /> Backlogs
+            </Button>
+          </div>
+          {/* float right */}
+          <div className="float-left p-1 mr-5 gap-2 flex">
+            <Button
+              appearance="subtle"
+              title="Filter"
+              className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+            >
+              <IconFilter2 />
+            </Button>
+            <Button
+              appearance="subtle"
+              size="sm"
+              title="Display"
+              className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
+            >
+              <IconAdjustmentsHorizontal /> Display
+            </Button>
+          </div>
+        </div>
+      </header>
+      <DndContext
+        collisionDetection={closestCenter}
+        onDragEnd={onDragEnd}
+        onDragStart={onDragStart}
+      >
+        <div className="bg-white  rounded-md relative mb-1">
+          {data.map((section) => (
+            <SortableContext
+              key={section.type}
+              items={section.issue_list.map((issue) => issue.id.toString())}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="flex items-center justify-between border bg-gray-100">
+                <div className="flex items-center justify-between w-full">
+                  <span
+                    className="text-sm cursor-pointer"
+                    onClick={() => toggleDropdown(section.type)}
                   >
-                  <IconCopy size={17}/> All issue
-                  </Button>
-                  <Button
-                  appearance="subtle"
-                  size="sm"
-                  title="Action"
-                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-                  >
-                  <IconPercentage60 /> Action
-                  </Button>
-                  <Button
-                  appearance="subtle"
-                  size="sm"
-                  title="Backlogs"
-                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-                  >
-                  <IconForbidFilled /> Backlogs
-                  </Button>
-                </div>
-                {/* float right */}
-                <div className="float-left p-1 mr-5 gap-2 flex">
-                  <Button
-                  appearance="subtle"
-                  title="Filter"
-                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-                  >
-                  <IconFilter2 />
-                  </Button>
-                  <Button
-                  appearance="subtle"
-                  size="sm"
-                  title="Display"
-                  className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-                  >
-                  <IconAdjustmentsHorizontal /> Display
-                  </Button>
-                </div>
-                </div>
-            </header>
-    <DndContext
-      collisionDetection={closestCenter}
-      onDragEnd={onDragEnd}
-      onDragStart={onDragStart}
-    >
-      <div className="bg-white  rounded-md relative mb-1">
-        {data.map((section) => (
-          <SortableContext
-            key={section.type}
-            items={section.issue_list.map((issue) => issue.id.toString())}
-            strategy={verticalListSortingStrategy}
-          >
-            <div className="flex items-center justify-between border bg-gray-100">
-              <div className="flex items-center justify-between w-full">
-                <span
-                  className="text-sm cursor-pointer"
-                  onClick={() => toggleDropdown(section.type)}
-                >
-                  <span className="flex cursor-pointer p-1">
-                    {dropdownStates[section.type] ? (
-                      <IconChevronDown size={12} />
-                    ) : (
-                      <IconChevronCompactRight size={12} />
-                    )}
+                    <span className="flex cursor-pointer p-1">
+                      {dropdownStates[section.type] ? (
+                        <IconChevronDown size={12} />
+                      ) : (
+                        <IconChevronCompactRight size={12} />
+                      )}
 
-                    <span className="text-sm font-semibold ml-2 capitalize">
-                      {section.type} {section.issue_list.length}
+                      <span className="text-sm font-semibold ml-2 capitalize">
+                        {section.type} {section.issue_list.length}
+                      </span>
                     </span>
                   </span>
-                </span>
+                </div>
+
+                <button
+                  className="text-md text-gray-500 hover:text-gray-500 flex items-center"
+                  onClick={() => modalRef.current?.openModal()}
+                >
+                  <TooltipMessage message="Add task">
+                    <ListPlus size={20} className="cursor-pointer mr-4" />
+                  </TooltipMessage>
+                </button>
               </div>
 
-              <button
-                className="text-md text-gray-500 hover:text-gray-500 flex items-center"
-                onClick={() => modalRef.current?.openModal()}
-              >
-                {/* <span className="material-icons mr-5 cursor-pointer">+</span> */}
-                <TooltipMessage message="Add task">
-                  <ListPlus size={20} className="cursor-pointer mr-4" />
-                </TooltipMessage>
-              </button>
-            </div>
+              {dropdownStates[section.type] && (
+                <div className="p-1">
+                  <DroppableContainer id={section.type}>
+                    <ul className="space-y-1 p-1">
+                      {section.issue_list.length > 0 ? (
+                        section.issue_list.map((issue) => (
+                          <SortableItem
+                            key={issue.id}
+                            issue={issue}
+                            sectionType={section.type}
+                            onRightClick={handleRightClick}
+                            onStatusClick={handleStatusClick}
+                            isDragging={activeId === issue.id.toString()}
+                            onModalOpen={handleOpenModal}
+                            onChatWindow={chatWindow}
+                            onIssuePriority={(e) => {
+                              const rect = (
+                                e.target as HTMLElement
+                              ).getBoundingClientRect();
+                              setPriorityDropdownPos({
+                                x: rect.left,
+                                y: rect.bottom,
+                              });
+                              setPriorityOpen(true);
+                              setStatus(false);
+                            }}
+                            onStatus={(e) => {
+                              const rect = (
+                                e.target as HTMLElement
+                              ).getBoundingClientRect();
+                              setPriorityDropdownPos({
+                                x: rect.left,
+                                y: rect.bottom,
+                              });
+                              setPriorityOpen(true);
+                              setStatus(true);
+                            }}
+                          />
+                        ))
+                      ) : (
+                        <li className="h-12 border-2 border-dashed border-gray-300 rounded flex items-center justify-center text-md text-gray-400">
+                          Drop here
+                        </li>
+                      )}
+                    </ul>
+                  </DroppableContainer>
+                </div>
+              )}
+            </SortableContext>
+          ))}
 
-            {dropdownStates[section.type] && (
-              <div className="p-1">
-                <DroppableContainer id={section.type}>
-                  <ul className="space-y-1 p-1">
-                    {section.issue_list.length > 0 ? (
-                      section.issue_list.map((issue) => (
-                        <SortableItem
-                          key={issue.id}
-                          issue={issue}
-                          sectionType={section.type}
-                          onRightClick={handleRightClick}
-                          onStatusClick={handleStatusClick}
-                          isDragging={activeId === issue.id.toString()}
-                          onModalOpen={handleOpenModal}
-                          onChatWindow={chatWindow}
-                          onIssuePriority={(e) => {
-                            const rect = (
-                              e.target as HTMLElement
-                            ).getBoundingClientRect();
-                            setPriorityDropdownPos({
-                              x: rect.left,
-                              y: rect.bottom,
-                            });
-                            setPriorityOpen(true);
-                            setStatus(false)
-                          }}
-                          onStatus={(e) => {
-                            const rect = (
-                              e.target as HTMLElement
-                            ).getBoundingClientRect();
-                            setPriorityDropdownPos({
-                              x: rect.left,
-                              y: rect.bottom,
-                            });
-                            setPriorityOpen(true);
-                            setStatus(true)
-                          }}
-                          // userProfile={setUserProfile("sm")}
-                        />
-                      ))
-                    ) : (
-                      <li className="h-12 border-2 border-dashed border-gray-300 rounded flex items-center justify-center text-md text-gray-400">
-                        Drop here
-                      </li>
-                    )}
-                  </ul>
-                </DroppableContainer>
+          {/* Right-click Dropdown */}
+          {showContextMenu && contextMenuPosition && (
+            <div
+              className="absolute z-50"
+              style={{
+                top: contextMenuPosition.y,
+                left: contextMenuPosition.x,
+              }}
+            >
+              <DropdownMenuIssueAction
+                dropdownPosition={contextMenuPosition}
+                isOpen={showContextMenu}
+                onOpenChange={setShowContextMenu}
+                onActionSelect={(action) => {
+                  console.log("Selected:", action);
+                  setShowContextMenu(false);
+                }}
+              />
+            </div>
+          )}
+
+          {/* Icon-click Issue Status Dropdown */}
+          {activeIssueForStatus && (
+            <div className="absolute top-20 right-10 z-50">
+              <IssueStatus
+                isOpen={!!activeIssueForStatus}
+                dropdownPosition={contextMenuPosition}
+                onOpenChange={setShowContextMenu}
+                onActionSelect={(action) => {
+                  console.log("Selected:", action);
+                  setShowContextMenu(false);
+                }}
+              />
+            </div>
+          )}
+
+          {/* Drag Overlay for visual feedback */}
+          <DragOverlay>
+            {activeIssue ? (
+              <div className="bg-white border border-blue-400 shadow-lg rounded px-2 py-1 text-sm text-gray-800 pointer-events-none select-none">
+                {activeIssue.title}
               </div>
-            )}
-          </SortableContext>
-        ))}
+            ) : null}
+          </DragOverlay>
 
-        {/* Right-click Dropdown */}
-        {showContextMenu && contextMenuPosition && (
-          <div
-            className="absolute z-50"
-            style={{ top: contextMenuPosition.y, left: contextMenuPosition.x }}
-          >
-            <DropdownMenuIssueAction
-              dropdownPosition={contextMenuPosition}
-              isOpen={showContextMenu}
-              onOpenChange={setShowContextMenu}
-              onActionSelect={(action) => {
-                console.log("Selected:", action);
-                setShowContextMenu(false);
+          <IssueModel ref={modalRef} />
+          {openChat && (
+            <ChatWindow
+              chatType="group" // or "single"
+              chatName="Project Group"
+              avatar="https://i.pravatar.cc/40?img=52"
+              members={[
+                {
+                  id: 1,
+                  name: "Alice",
+                  avatar: "https://i.pravatar.cc/40?img=40",
+                },
+                {
+                  id: 2,
+                  name: "Bob",
+                  avatar: "https://i.pravatar.cc/40?img=50",
+                },
+              ]}
+              onClose={() => setOpenChat(false)}
+            />
+          )}
+          {/* IssuePriority dropdown, controlled by parent */}
+          {priorityOpen && priorityDropdownPos && (
+            <CommonDropdown
+              open={priorityOpen}
+              frameworks={
+                isStatus
+                  ? [
+                      { value: "low", label: "Low" },
+                      { value: "medium", label: "Medium" },
+                      { value: "high", label: "High" },
+                    ]
+                  : [
+                      { value: "todo", label: "To Do" },
+                      { value: "in_progress", label: "In Progress" },
+                      { value: "done", label: "Done" },
+                      { value: "cancel", label: "Cancelled" },
+                    ]
+              }
+              onOpenChange={setPriorityOpen}
+              style={{
+                position: "absolute",
+                zIndex: 50,
+                left: priorityDropdownPos.x,
+                top: priorityDropdownPos.y,
               }}
             />
-          </div>
-        )}
-
-        {/* Icon-click Issue Status Dropdown */}
-        {activeIssueForStatus && (
-          <div className="absolute top-20 right-10 z-50">
-            <IssueStatus
-              isOpen={!!activeIssueForStatus}
-              dropdownPosition={contextMenuPosition}
-              onOpenChange={setShowContextMenu}
-              onActionSelect={(action) => {
-                console.log("Selected:", action);
-                setShowContextMenu(false);
-              }}
-            />
-          </div>
-        )}
-
-        {/* Drag Overlay for visual feedback */}
-        <DragOverlay>
-          {activeIssue ? (
-            <div className="bg-white border border-blue-400 shadow-lg rounded px-2 py-1 text-sm text-gray-800 pointer-events-none select-none">
-              {activeIssue.title}
-            </div>
-          ) : null}
-        </DragOverlay>
-
-        <IssueModel ref={modalRef} />
-        {openChat && (
-          <ChatWindow
-            chatType="group" // or "single"
-            chatName="Project Group"
-            avatar="https://i.pravatar.cc/40?img=52"
-            members={[
-              {
-                id: 1,
-                name: "Alice",
-                avatar: "https://i.pravatar.cc/40?img=40",
-              },
-              { id: 2, name: "Bob", avatar: "https://i.pravatar.cc/40?img=50" },
-            ]}
-            onClose={() => setOpenChat(false)}
-          />
-        )}
-        {/* IssuePriority dropdown, controlled by parent */}
-        {priorityOpen && priorityDropdownPos && (
-          <CommonDropdown
-            open={priorityOpen}
-            frameworks={
-              isStatus
-          ? [
-              { value: "low", label: "Low" },
-              { value: "medium", label: "Medium" },
-              { value: "high", label: "High" },
-            ]
-          : [
-              { value: "todo", label: "To Do" },
-              { value: "in_progress", label: "In Progress" },
-              { value: "done", label: "Done" },
-              { value: "cancel", label: "Cancelled" },
-            ]
-            }
-            onOpenChange={setPriorityOpen}
-            style={{
-              position: "absolute",
-              zIndex: 50,
-              left: priorityDropdownPos.x,
-              top: priorityDropdownPos.y,
-            }}
-          />
-        )}
-      </div>
-    </DndContext>
+          )}
+        </div>
+      </DndContext>
     </>
   );
 }
+
+export default TableDemo;
