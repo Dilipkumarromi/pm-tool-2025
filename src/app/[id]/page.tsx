@@ -1,9 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
+import EditText from "@/components/model/projectActionDropdown/edit-text";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-
+import { useRouter } from "next/router";
 export default function IssueDetailsPage() {
+  // const router = useRouter()
+  // const { id } = router.query;
+  // console.log("dynamic page",id)
   return (
     <>
       <div className="flex flex-col min-h-screen bg-[#fafbfc]">
@@ -27,58 +31,10 @@ export default function IssueDetailsPage() {
         <div className="flex flex-1">
           {/* Main Content */}
           <div className="flex-1 px-12 py-8">
-            {/* Title */}
-            <h1 className="text-2xl font-semibold mb-2">dddd</h1>
-            {/* Sub-issue */}
-            <div className="flex items-center mb-4">
-              <span className="text-gray-500 mr-2">Sub-issue of</span>
-              <label className="flex items-center mr-2">
-                <input
-                  type="radio"
-                  className="mr-1"
-                  name="subissue"
-                  defaultChecked
-                />
-                <span className="font-medium text-gray-700">STU-5 ddd</span>
-              </label>
-              <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
-                0/1
-              </span>
+            <div className="flex flex-col h-full">
+            <EditText/>
             </div>
-            {/* Description */}
-            <div className="mb-4">
-              <div className="text-gray-400 mb-2">Add description...</div>
-              <button className="text-gray-400 hover:text-gray-600">
-                <svg width="20" height="20" fill="none" stroke="currentColor">
-                  <circle cx="10" cy="10" r="9" />
-                </svg>
-              </button>
-            </div>
-            {/* Sub-issues */}
-            <div className="mb-4">
-              <button className="flex items-center text-gray-600 mb-1">
-                <svg
-                  width="16"
-                  height="16"
-                  fill="none"
-                  stroke="currentColor"
-                  className="mr-1"
-                >
-                  <polyline points="6 9 9 12 14 7" />
-                </svg>
-                <span className="mr-2">Sub-issues</span>
-                <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
-                  0/1
-                </span>
-              </button>
-              <div className="flex items-center ml-6 mb-2">
-                <input type="radio" className="mr-2" name="subissue2" />
-                <span className="mr-2 text-gray-700">sd1s3d</span>
-                <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
-                  0/1
-                </span>
-              </div>
-            </div>
+      
             {/* Issue creation box */}
             <div className="bg-white border rounded-lg shadow-sm p-4 mb-6">
               <input

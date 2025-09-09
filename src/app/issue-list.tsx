@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React, { useRef, useState } from "react";
+import router, { useRouter } from 'next/router';
 import {
   CircleDotDashed,
   Cable,
@@ -135,6 +136,10 @@ function SortableItem({
     },
   ];
 
+  const handleNavigate = (id) => {
+    console.log("button click event")
+    router.push(`/issue-details/${id}`);
+  };
   return (
     <>
       <li
@@ -173,6 +178,7 @@ function SortableItem({
             className="text-gray-800 text-sm"
             {...attributes}
             {...listeners}
+            // onClick={() => handleNavigate(2)}
           >
             {issue.title}
           </span>
