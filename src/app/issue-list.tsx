@@ -1,6 +1,6 @@
 "use client";
 import React, { useRef, useState } from "react";
-import { useRouter } from "next/navigation"; // <- fixed import
+import { useRouter } from "next/navigation"; // Correct router import
 import {
   CircleDotDashed,
   Cable,
@@ -9,6 +9,7 @@ import {
   PlusCircle,
   MessageCircle,
   Move,
+  CircleX,
 } from "lucide-react";
 import "./new-globals.css";
 import {
@@ -19,8 +20,6 @@ import {
   DragOverlay,
   useDroppable,
 } from "@dnd-kit/core";
-import { Badge } from "@/components/ui/badge";
-
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -39,20 +38,8 @@ import {
 } from "@tabler/icons-react";
 import moment from "moment";
 
-// Font imports reordered (keeps original intent but avoids runtime error)
-import { Geist, Geist_Mono } from "next/font/google";
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 import { DropdownMenuIssueAction } from "@/components/dropdown";
 import { IssueStatus } from "@/components/issue-status";
-
 import IssueModel from "@/components/model/IssueModel";
 import { UserProfileAssign } from "@/components/profile-dropdown";
 import { TooltipMessage } from "@/components/tooltip";
@@ -103,7 +90,6 @@ function SortableItem({
       },
     });
 
-  // useRouter hook used here so navigation works correctly
   const router = useRouter();
 
   const style = {
@@ -115,108 +101,78 @@ function SortableItem({
     boxShadow: transform ? "0 4px 8px rgba(96, 165, 250, 0.4)" : "none",
   };
 
-  const items1 = [
-    {
-      label: "No assignee",
-      icon: <i className="fa-solid fa-circle"></i>,
-      key: 1,
-    },
-    {
-      label: "Team members",
-      icon: <i className="fa-solid fa-users"></i>,
-      key: 2,
-    },
-    {
-      label: "New user",
-      icon: <i className="fa-solid fa-user-plus"></i>,
-      key: 3,
-    },
-    {
-      label: "Invite and assign...",
-      icon: <i className="fa-solid fa-paper-plane"></i>,
-      key: 4,
-    },
-  ];
-
-  // Navigation handler uses router from next/navigation
   const handleNavigate = (id: number) => {
-    // keep the existing console.log for debugging
-    console.log("button click event", id);
-    // push to issue-details route
     router.push(`/issue-details/${id}`);
   };
 
   return (
-    <>
-      <li
-        ref={setNodeRef}
-        style={style}
-        className={`flex justify-between p-1 hover:bg-gray-50 text-md ${
-          transform ? "select-none" : ""
-        }`}
-        onContextMenu={(e) => {
-          e.preventDefault();
-          onRightClick(e);
-        }}
-      >
-        <div className="flex space-x-1 text-sm gap-2 items-center px-1">
-          {/* Drag Handle */}
-          <span
-            className="text-gray-500 cursor-grab select-none cursor-pointer"
-            onClick={onIssuePriority}
-          >
-            ---
-          </span>
+    <li
+      ref={setNodeRef}
+      style={style}
+      className={`flex justify-between p-1 hover:bg-gray-50 text-md ${
+        transform ? "select-none" : ""
+      }`}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        onRightClick(e);
+      }}
+    >
+      <div className="flex space-x-1 text-sm gap-2 items-center px-1">
+        {/* Drag Handle */}
+        <span
+          className="text-gray-500 cursor-grab select-none cursor-pointer"
+          onClick={onIssuePriority}
+        >
+          ---
+        </span>
 
-          {/* Static ID */}
-          <span
-            className="text-gray-500 text-sm cursor-all-scroll"
-            {...attributes}
-            {...listeners}
-            aria-describedby={`DndDescribedBy-${issue.id}`} // make describedBy deterministic to avoid hydration mismatch
-          >
-            STU-{issue.id}
-          </span>
+        {/* Static ID */}
+        <span
+          className="text-gray-500 text-sm cursor-all-scroll"
+          {...attributes}
+          {...listeners}
+          aria-describedby={`DndDescribedBy-${issue.id}`} // stable id
+        >
+          STU-{issue.id}
+        </span>
 
-          {/* Status Circle Icon */}
-          <span
-            className="text-gray-500 text-sm cursor-pointer"
-            onClick={() => onStatusClick(issue)}
-          >
-            <IconCircle size={17} onClick={onStatus} />
-          </span>
+        {/* Status Circle Icon */}
+        <span
+          className="text-gray-500 text-sm cursor-pointer"
+          onClick={() => onStatusClick(issue)}
+        >
+          <IconCircle size={17} onClick={onStatus} />
+        </span>
 
-          {/* Title & Description */}
-          <span
-            className="text-gray-800 text-sm cursor-pointer"
-            onClick={() => handleNavigate(issue.id)} // <-- fixed: dynamic id
-          >
-            {issue.title}
-          </span>
+        {/* Title & Description */}
+        <span
+          className="text-gray-800 text-sm cursor-pointer"
+          onClick={() => handleNavigate(issue.id)}
+        >
+          {issue.title}
+        </span>
 
-          <span className="text-gray-500 text-sm">{issue.description}</span>
+        <span className="text-gray-500 text-sm">{issue.description}</span>
 
-          {/* Cable Icon Button */}
-          <span
-            className="m-1 ml-4  cursor-pointer"
-            onClick={() => {
-              onStatusClick(issue); // keep your existing logic
-              onChatWindow(); // also open chat window
-            }}
-          >
-            <TooltipMessage message="Group Decurion?">
-              <MessageCircle size={15} />
-            </TooltipMessage>
-          </span>
-        </div>
+        {/* Cable Icon Button */}
+        <span
+          className="m-1 ml-4 cursor-pointer"
+          onClick={() => {
+            onStatusClick(issue);
+            onChatWindow();
+          }}
+        >
+          <TooltipMessage message="Group Decurion?">
+            <MessageCircle size={15} />
+          </TooltipMessage>
+        </span>
+      </div>
 
-        <div className="flex items-center space-x-1 text-gray-500 text-md">
-          {/* <CircleFadingPlus size={15} className="cursor-pointer" /> */}
-          <UserProfileAssign />
-          <span className="text-sm">{issue.createdAt}</span>
-        </div>
-      </li>
-    </>
+      <div className="flex items-center space-x-1 text-gray-500 text-md">
+        <UserProfileAssign />
+        <span className="text-sm">{issue.createdAt}</span>
+      </div>
+    </li>
   );
 }
 
@@ -256,6 +212,7 @@ export function TableDemo() {
   const [data, setData] = useState([
     {
       type: "todo",
+      icon: <CircleX size={18} color="red" />,
       issue_list: [
         {
           id: 1,
@@ -279,6 +236,7 @@ export function TableDemo() {
     },
     {
       type: "in progress",
+      icon: <CircleX size={18} color="green" />,
       issue_list: [
         {
           id: 2,
@@ -293,6 +251,7 @@ export function TableDemo() {
     },
     {
       type: "cancel",
+      icon: <CircleX size={18} color="blue" />,
       issue_list: [
         {
           id: 3,
@@ -302,11 +261,13 @@ export function TableDemo() {
           priority: "Low",
           type: "cancel",
           createdAt: moment("2023-07-27").format("MMM Do YY"),
+          icon: <CircleX />,
         },
       ],
     },
     {
       type: "done",
+      icon: <CircleX size={18} color="red" />,
       issue_list: [
         {
           id: 4,
@@ -316,6 +277,7 @@ export function TableDemo() {
           priority: "High",
           type: "done",
           createdAt: moment("2023-07-28").format("MMM Do YY"),
+          icon: <CircleX />,
         },
       ],
     },
@@ -359,9 +321,6 @@ export function TableDemo() {
 
     if (!sourceType || !destinationType) return;
 
-    const sourceId = active.id;
-    const destinationId = over.id;
-
     const sourceSection = data.find((section) => section.type === sourceType);
     const destinationSection = data.find(
       (section) => section.type === destinationType
@@ -369,25 +328,26 @@ export function TableDemo() {
     if (!sourceSection || !destinationSection) return;
 
     const draggedItemIndex = sourceSection.issue_list.findIndex(
-      (item) => item.id.toString() === sourceId.toString()
+      (item) => item.id.toString() === active.id.toString()
     );
     const draggedItem = sourceSection.issue_list[draggedItemIndex];
 
     if (sourceType === destinationType) {
       const overIndex = sourceSection.issue_list.findIndex(
-        (item) => item.id.toString() === destinationId.toString()
+        (item) => item.id.toString() === over.id.toString()
       );
 
       const updatedList = [...sourceSection.issue_list];
       updatedList.splice(draggedItemIndex, 1);
       updatedList.splice(overIndex, 0, draggedItem);
 
-      const updatedSections = data.map((section) =>
-        section.type === sourceType
-          ? { ...section, issue_list: updatedList }
-          : section
+      setData((prevData) =>
+        prevData.map((section) =>
+          section.type === sourceType
+            ? { ...section, issue_list: updatedList }
+            : section
+        )
       );
-      setData(updatedSections);
     } else {
       const updatedSourceList = [...sourceSection.issue_list];
       updatedSourceList.splice(draggedItemIndex, 1);
@@ -397,20 +357,20 @@ export function TableDemo() {
         { ...draggedItem, type: destinationType },
       ];
 
-      const updatedSections = data.map((section) => {
-        if (section.type === sourceType) {
-          return { ...section, issue_list: updatedSourceList };
-        } else if (section.type === destinationType) {
-          return { ...section, issue_list: updatedDestinationList };
-        }
-        return section;
-      });
-
-      setData(updatedSections);
+      setData((prevData) =>
+        prevData.map((section) => {
+          if (section.type === sourceType) {
+            return { ...section, issue_list: updatedSourceList };
+          } else if (section.type === destinationType) {
+            return { ...section, issue_list: updatedDestinationList };
+          }
+          return section;
+        })
+      );
     }
   };
 
-  // Find dragged issue for overlay rendering
+  // Drag Overlay issue
   const activeIssue =
     activeId &&
     data
@@ -422,86 +382,54 @@ export function TableDemo() {
   const [openChat, setOpenChat] = useState(false);
   const [priorityOpen, setPriorityOpen] = useState(false);
   const [isStatus, setStatus] = useState(false);
-  const [value, setValue] = useState("");
-  const handleOpenModal = (size = "md") => {
-    setModalSize(size);
-    setModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-  };
-  const modalRef = useRef<{ openModal: () => void; closeModal: () => void }>(
-    null
-  );
-  const chatWindow = () => {
-    setOpenChat(true);
-  };
   const [priorityDropdownPos, setPriorityDropdownPos] = useState<{
     x: number;
     y: number;
   } | null>(null);
 
-  const anchorRef = useRef<HTMLButtonElement>(null);
+  const modalRef = useRef<{ openModal: () => void; closeModal: () => void }>(
+    null
+  );
+
+  const chatWindow = () => {
+    setOpenChat(true);
+  };
 
   return (
     <>
       <header className="bg-background sticky top-0 flex h-12 shrink-0 items-center gap-2 border-b px-4">
         <SidebarTrigger className="-ml-0" />
         <div className="flex justify-between items-center w-full">
-          {/* float left */}
+          {/* Left */}
           <div className="float-right p-1 ml-5 gap-2 flex">
-            <Button
-              appearance="subtle"
-              size="sm"
-              title="All issue"
-              className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-            >
+            <Button appearance="subtle" size="sm" title="All issue">
               <IconCopy size={17} /> All issue
             </Button>
-            <Button
-              appearance="subtle"
-              size="sm"
-              title="Action"
-              className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-            >
+            <Button appearance="subtle" size="sm" title="Action">
               <IconPercentage60 /> Action
             </Button>
-            <Button
-              appearance="subtle"
-              size="sm"
-              title="Backlogs"
-              className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-            >
+            <Button appearance="subtle" size="sm" title="Backlogs">
               <IconForbidFilled /> Backlogs
             </Button>
           </div>
-          {/* float right */}
+          {/* Right */}
           <div className="float-left p-1 mr-5 gap-2 flex">
-            <Button
-              appearance="subtle"
-              title="Filter"
-              className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-            >
+            <Button appearance="subtle" title="Filter">
               <IconFilter2 />
             </Button>
-            <Button
-              appearance="subtle"
-              size="sm"
-              title="Display"
-              className="text-xs p-1 min-w-[20px] h-[25px] flex items-center justify-center shadow-none"
-            >
+            <Button appearance="subtle" size="sm" title="Display">
               <IconAdjustmentsHorizontal /> Display
             </Button>
           </div>
         </div>
       </header>
+
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={onDragEnd}
         onDragStart={onDragStart}
       >
-        <div className="bg-white  rounded-md relative mb-1">
+        <div className="bg-white rounded-md relative mb-1">
           {data.map((section) => (
             <SortableContext
               key={section.type}
@@ -514,22 +442,34 @@ export function TableDemo() {
                     className="text-sm cursor-pointer"
                     onClick={() => toggleDropdown(section.type)}
                   >
-                    <span className="flex cursor-pointer p-1">
-                      {dropdownStates[section.type] ? (
-                        <IconChevronDown size={12} />
-                      ) : (
-                        <IconChevronCompactRight size={12} />
-                      )}
+                    <span className="flex cursor-pointer p-1 items-center">
+  <span className="flex items-center justify-center">
+    {dropdownStates[section.type] ? (
+      <IconChevronDown size={12} />
+    ) : (
+      <IconChevronCompactRight size={12} />
+    )}
+  </span>
 
-                      <span className="text-sm font-semibold ml-2 capitalize">
-                        {section.type} {section.issue_list.length}
-                      </span>
-                    </span>
+  <span className="text-sm font-semibold ml-2 capitalize">
+    <div className="flex items-center gap-1">
+      <span className="flex items-center justify-center p-0 rounded-full bg-gray-100">
+        {section.icon}
+      </span>
+      <span className="px-0 py-1">
+        {section.type}
+      </span>
+      <span className="px-2 py-1">
+        {section.issue_list.length}
+      </span>
+    </div>
+  </span>
+</span>
+
                   </span>
                 </div>
-
                 <button
-                  className="text-md text-gray-500 hover:text-gray-500 flex items-center"
+                  className="text-md text-gray-500 flex items-center"
                   onClick={() => modalRef.current?.openModal()}
                 >
                   <TooltipMessage message="Add task">
@@ -551,7 +491,7 @@ export function TableDemo() {
                             onRightClick={handleRightClick}
                             onStatusClick={handleStatusClick}
                             isDragging={activeId === issue.id.toString()}
-                            onModalOpen={handleOpenModal}
+                            onModalOpen={() => modalRef.current?.openModal()}
                             onChatWindow={chatWindow}
                             onIssuePriority={(e) => {
                               const rect = (
@@ -589,7 +529,7 @@ export function TableDemo() {
             </SortableContext>
           ))}
 
-          {/* Right-click Dropdown */}
+          {/* Right-click Menu */}
           {showContextMenu && contextMenuPosition && (
             <div
               className="absolute z-50"
@@ -610,7 +550,7 @@ export function TableDemo() {
             </div>
           )}
 
-          {/* Icon-click Issue Status Dropdown */}
+          {/* Status Dropdown */}
           {activeIssueForStatus && (
             <div className="absolute top-20 right-10 z-50">
               <IssueStatus
@@ -625,7 +565,7 @@ export function TableDemo() {
             </div>
           )}
 
-          {/* Drag Overlay for visual feedback */}
+          {/* Drag Overlay */}
           <DragOverlay>
             {activeIssue ? (
               <div className="bg-white border border-blue-400 shadow-lg rounded px-2 py-1 text-sm text-gray-800 pointer-events-none select-none">
@@ -635,9 +575,10 @@ export function TableDemo() {
           </DragOverlay>
 
           <IssueModel ref={modalRef} />
+
           {openChat && (
             <ChatWindow
-              chatType="group" // or "single"
+              chatType="group"
               chatName="Project Group"
               avatar="https://i.pravatar.cc/40?img=52"
               members={[
@@ -655,7 +596,8 @@ export function TableDemo() {
               onClose={() => setOpenChat(false)}
             />
           )}
-          {/* IssuePriority dropdown, controlled by parent */}
+
+          {/* Priority Dropdown */}
           {priorityOpen && priorityDropdownPos && (
             <CommonDropdown
               open={priorityOpen}
