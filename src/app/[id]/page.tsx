@@ -1,14 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-
-import EditText from "@/components/model/projectActionDropdown/edit-text";
+import EditTextDetailsPage from "@/components/model/projectActionDropdown/edit-text";
 import { SidebarRight } from "@/components/sidebar-right";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useRouter } from "next/router";
+ 
 export default function IssueDetailsPage() {
-  // const router = useRouter()
-  // const { id } = router.query;
-  // console.log("dynamic page",id)
+ 
   return (
     <>
       <div className="flex flex-col min-h-screen bg-[#fafbfc]">
@@ -20,7 +16,8 @@ export default function IssueDetailsPage() {
           >
             {/* Centered Header Block */}
             <div className="mx-auto max-w-2xl"></div>
-             <EditText />
+             <EditTextDetailsPage />
+             <p>for testing</p>
           </main>
           {/* Sidebar */}
           <div style={{ width: "20%" }}>

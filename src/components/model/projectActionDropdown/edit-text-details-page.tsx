@@ -9,16 +9,16 @@ import Image from "@tiptap/extension-image";
 import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 import "../modelStyle.css";
-function EditText() {
-  const editorRef = React.useRef<HTMLDivElement>(null);
-
+function EditTextDetailsPage() {
   return (
     <>
       <div
         style={{
           position: "sticky",
           top: 0,
+          background: "#fff",
           zIndex: 2,
+          // maxHeight:"300px"
         }}
       >
         <input
@@ -27,7 +27,7 @@ function EditText() {
             border: "none",
             outline: "none",
             fontWeight: "bold",
-            fontSize: "25px",
+            fontSize: "15px",
             width: "100%",
             padding: "10px 0px",
           }}
@@ -35,21 +35,17 @@ function EditText() {
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              // Move focus to the editor content
-              if (editorRef.current) {
-                const contentEditable = editorRef.current.querySelector('[contenteditable="true"]');
-                if (contentEditable) (contentEditable as HTMLElement).focus();
-              }
+              // Assuming that the Tiptap editor instance is globally accessible
+              // working like tab
             }
           }}
         />
       </div>
       <div style={{ position: "relative", height: "100%" }}>
         <div
-          ref={editorRef}
           style={{
             paddingBottom: "20px",
-            overflowY: "hidden",
+            overflowY: "-moz-hidden-unscrollable",
           }}
         >
           <Tiptap />
@@ -133,13 +129,13 @@ const Tiptap = () => {
     editorProps: {
       attributes: {
         style:
-          "border: none; padding: 0px; margin: 0px; outline: none; margin-bottom: 70px;",
+          "overflow-y: auto; border: none; padding: 0px; margin: 0px; outline: none; max-height: 350px; margin-bottom: 70px;",
         class:
-          "prose prose-sm sm:prose-base lg:prose-lg xl:prose-1xl m-5 focus:outline-none min-height: 70px",
+          "prose prose-sm sm:prose-base lg:prose-lg xl:prose-1xl m-5 focus:outline-none; min-height: 70px; ",
       },
     },
   });
   return <EditorContent editor={editor} />;
 };
 
-export default EditText;
+export default EditTextDetailsPage;

@@ -10,7 +10,7 @@ import {
   MessageCircle,
   Move,
   CircleX,
-  Headset
+  Headset,
 } from "lucide-react";
 import "./new-globals.css";
 import {
@@ -103,11 +103,9 @@ function SortableItem({
     boxShadow: transform ? "0 4px 8px rgba(96, 165, 250, 0.4)" : "none",
   };
 
-  const handleNavigate = (id: number):any => {
-    
+  const handleNavigate = (id: number): void => {
     // router.push(`/issue-details/${encodeURI(encryptQuery(id))}`);
     router.push(`/issue-details/4`);
-
   };
 
   return (
@@ -167,7 +165,7 @@ function SortableItem({
             onChatWindow();
           }}
         >
-          <Headset size={15} color="green"/>
+          <Headset size={15} color="green" />
           {/* <TooltipMessage message="Group Decurion?">
             
           </TooltipMessage> */}
@@ -449,29 +447,26 @@ export function TableDemo() {
                     onClick={() => toggleDropdown(section.type)}
                   >
                     <span className="flex cursor-pointer p-1 items-center">
-  <span className="flex items-center justify-center">
-    {dropdownStates[section.type] ? (
-      <IconChevronDown size={12} />
-    ) : (
-      <IconChevronCompactRight size={12} />
-    )}
-  </span>
+                      <span className="flex items-center justify-center">
+                        {dropdownStates[section.type] ? (
+                          <IconChevronDown size={12} />
+                        ) : (
+                          <IconChevronCompactRight size={12} />
+                        )}
+                      </span>
 
-  <span className="text-sm font-semibold ml-2 capitalize">
-    <div className="flex items-center gap-1">
-      <span className="flex items-center justify-center p-0 rounded-full bg-gray-100">
-        {section.icon}
-      </span>
-      <span className="px-0 py-1">
-        {section.type}
-      </span>
-      <span className="px-2 py-1">
-        {section.issue_list.length}
-      </span>
-    </div>
-  </span>
-</span>
-
+                      <span className="text-sm font-semibold ml-2 capitalize">
+                        <div className="flex items-center gap-1">
+                          <span className="flex items-center justify-center p-0 rounded-full bg-gray-100">
+                            {section.icon}
+                          </span>
+                          <span className="px-0 py-1">{section.type}</span>
+                          <span className="px-2 py-1">
+                            {section.issue_list.length}
+                          </span>
+                        </div>
+                      </span>
+                    </span>
                   </span>
                 </div>
                 <button
