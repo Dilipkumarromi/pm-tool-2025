@@ -105,7 +105,9 @@ function SortableItem({
 
   const handleNavigate = (id: number):any => {
     
-    router.push(`/issue-details/${encodeURI(encryptQuery(id))}`);
+    // router.push(`/issue-details/${encodeURI(encryptQuery(id))}`);
+    router.push(`/issue-details/4`);
+
   };
 
   return (

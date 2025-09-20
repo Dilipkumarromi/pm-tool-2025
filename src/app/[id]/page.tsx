@@ -2,6 +2,7 @@
 "use client";
 
 import EditText from "@/components/model/projectActionDropdown/edit-text";
+import { SidebarRight } from "@/components/sidebar-right";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useRouter } from "next/router";
 export default function IssueDetailsPage() {
@@ -164,6 +165,7 @@ export default function IssueDetailsPage() {
           </div>
         </div>
       </div>
+       <SidebarRight />
     </>
   );
 }
