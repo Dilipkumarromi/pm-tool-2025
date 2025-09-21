@@ -118,9 +118,6 @@
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --color-red-500: #fb2c36;
-    --color-orange-100: #ffedd5;
-    --color-orange-500: #fe6e00;
-    --color-orange-600: #f05100;
     --color-yellow-500: #edb200;
     --color-green-500: #00c758;
     --color-blue-100: #dbeafe;
@@ -143,6 +140,7 @@
     --container-sm: 24rem;
     --container-md: 28rem;
     --container-lg: 32rem;
+    --container-2xl: 42rem;
     --text-xs: .75rem;
     --text-xs--line-height: calc(1 / .75);
     --text-sm: .875rem;
@@ -171,9 +169,6 @@
   @supports (color: color(display-p3 0 0 0)) {
     :root, :host {
       --color-red-500: color(display-p3 .903738 .262579 .253307);
-      --color-orange-100: color(display-p3 .988762 .931393 .843273);
-      --color-orange-500: color(display-p3 .946589 .449788 .0757345);
-      --color-orange-600: color(display-p3 .887467 .341665 .0219962);
       --color-yellow-500: color(display-p3 .903651 .703062 .0745389);
       --color-green-500: color(display-p3 .308734 .774754 .374307);
       --color-blue-100: color(display-p3 .869214 .915931 .989622);
@@ -196,9 +191,6 @@
   @supports (color: lab(0% 0 0)) {
     :root, :host {
       --color-red-500: lab(55.4814% 75.0732 48.8528);
-      --color-orange-100: lab(94.7127% 3.58394 14.3151);
-      --color-orange-500: lab(64.272% 57.1788 90.3583);
-      --color-orange-600: lab(57.1026% 64.2584 89.8886);
       --color-yellow-500: lab(76.3898% 14.5258 98.4589);
       --color-green-500: lab(70.5521% -66.5147 45.8073);
       --color-blue-100: lab(92.0301% -2.24757 -11.6453);
@@ -996,16 +988,17 @@
     margin-inline: calc(var(--spacing) * 0);
   }
 
-  .mx-1 {
-    margin-inline: calc(var(--spacing) * 1);
-  }
-
   .mx-2 {
     margin-inline: calc(var(--spacing) * 2);
   }
 
   .mx-3\.5 {
     margin-inline: calc(var(--spacing) * 3.5);
+  }
+
+  .mx-auto {
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .my-1 {
@@ -1040,10 +1033,6 @@
     margin-top: calc(var(--spacing) * 4);
   }
 
-  .mt-8 {
-    margin-top: calc(var(--spacing) * 8);
-  }
-
   .mt-auto {
     margin-top: auto;
   }
@@ -1066,18 +1055,6 @@
 
   .mb-1 {
     margin-bottom: calc(var(--spacing) * 1);
-  }
-
-  .mb-2 {
-    margin-bottom: calc(var(--spacing) * 2);
-  }
-
-  .mb-4 {
-    margin-bottom: calc(var(--spacing) * 4);
-  }
-
-  .mb-6 {
-    margin-bottom: calc(var(--spacing) * 6);
   }
 
   .-ml-0 {
@@ -1400,6 +1377,10 @@
     max-width: var(--skeleton-width);
   }
 
+  .max-w-2xl {
+    max-width: var(--container-2xl);
+  }
+
   .max-w-\[64px\] {
     max-width: 64px;
   }
@@ -1527,10 +1508,6 @@
     cursor: pointer;
   }
 
-  .resize-none {
-    resize: none;
-  }
-
   .scroll-py-1 {
     scroll-padding-block: calc(var(--spacing) * 1);
   }
@@ -1561,10 +1538,6 @@
 
   .justify-center {
     justify-content: center;
-  }
-
-  .justify-end {
-    justify-content: flex-end;
   }
 
   .gap-1 {
@@ -1882,10 +1855,6 @@
     background-color: var(--color-blue-500);
   }
 
-  .bg-blue-600 {
-    background-color: var(--color-blue-600);
-  }
-
   .bg-border {
     background-color: var(--border);
   }
@@ -1926,10 +1895,6 @@
     .bg-muted\/50 {
       background-color: color-mix(in oklab, var(--muted) 50%, transparent);
     }
-  }
-
-  .bg-orange-100 {
-    background-color: var(--color-orange-100);
   }
 
   .bg-popover {
@@ -2054,10 +2019,6 @@
 
   .py-3 {
     padding-block: calc(var(--spacing) * 3);
-  }
-
-  .py-4 {
-    padding-block: calc(var(--spacing) * 4);
   }
 
   .py-6 {
@@ -2206,14 +2167,6 @@
 
   .text-muted-foreground {
     color: var(--muted-foreground);
-  }
-
-  .text-orange-500 {
-    color: var(--color-orange-500);
-  }
-
-  .text-orange-600 {
-    color: var(--color-orange-600);
   }
 
   .text-popover-foreground {
@@ -2824,12 +2777,6 @@
   @media (hover: hover) {
     .hover\:text-foreground:hover {
       color: var(--foreground);
-    }
-  }
-
-  @media (hover: hover) {
-    .hover\:text-gray-600:hover {
-      color: var(--color-gray-600);
     }
   }
 
@@ -3785,7 +3732,28 @@ body {
   -ms-text-size-adjust: none;
   -o-text-size-adjust: none;
   -webkit-text-size-adjust: 100%;
+  --content-bg-color: #f5f5f5;
+  --header-color: #fcfcfc;
+  --header-height: 39.5px;
+  --focus-color: #6d78d5;
+  --pointer: default;
   line-height: 1.5;
+}
+
+@supports (color: color(display-p3 0 0 0)) {
+  body {
+    --content-bg-color: color(display-p3 .962246 .962246 .962246);
+    --header-color: color(display-p3 .988644 .988644 .988644);
+    --focus-color: color(display-p3 .437112 .470898 .812105);
+  }
+}
+
+@supports (color: lab(0% 0 0)) {
+  body {
+    --content-bg-color: lab(96.667% 0 0);
+    --header-color: lab(99% 0 0);
+    --focus-color: lab(53% 15.2008 -50.0004);
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {

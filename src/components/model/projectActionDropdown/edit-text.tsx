@@ -9,8 +9,36 @@ import Image from "@tiptap/extension-image";
 import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 import "../modelStyle.css";
+
 function EditText() {
   const editorRef = React.useRef<HTMLDivElement>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  // Handler for image upload button
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      const file = files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (editorRef.current) {
+          const contentEditable = editorRef.current.querySelector('[contenteditable="true"]');
+          if (contentEditable) {
+            // Use Tiptap's editor instance to insert image
+            const editorInstance = (contentEditable as any).editor;
+            if (editorInstance) {
+              editorInstance
+                .chain()
+                .focus()
+                .setImage({ src: reader.result as string })
+                .run();
+            }
+          }
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <>
@@ -35,13 +63,27 @@ function EditText() {
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              // Move focus to the editor content
               if (editorRef.current) {
                 const contentEditable = editorRef.current.querySelector('[contenteditable="true"]');
                 if (contentEditable) (contentEditable as HTMLElement).focus();
               }
             }
           }}
+        />
+        {/* Image upload button */}
+        <button
+          type="button"
+          style={{ marginLeft: "10px", padding: "6px 12px" }}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          Upload Image
+        </button>
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          style={{ display: "none" }}
+          onChange={handleImageUpload}
         />
       </div>
       <div style={{ position: "relative", height: "100%" }}>
@@ -67,9 +109,10 @@ function EditText() {
     </>
   );
 }
-const Tiptap = () => {
+
+const Tiptap = ({ setEditorInstance }) => {
   const editor = useEditor({
-    immediatelyRender: true,
+    immediatelyRender: false, // Fix SSR warning
     autofocus: true,
     content: "",
     extensions: [
@@ -98,10 +141,6 @@ const Tiptap = () => {
         },
         onPaste: (currentEditor, files, htmlContent) => {
           files.forEach((file) => {
-            if (htmlContent) {
-              console.log(htmlContent);
-              return false;
-            }
             const fileReader = new FileReader();
             fileReader.readAsDataURL(file);
             fileReader.onload = () => {
@@ -124,11 +163,7 @@ const Tiptap = () => {
     ],
     onUpdate: ({ editor }) => {
       const dom = editor.view.dom;
-      if (editor.getText().trim().length > 0) {
-        dom.style.marginBottom = "0px";
-      } else {
-        dom.style.marginBottom = "0px";
-      }
+      dom.style.marginBottom = "0px";
     },
     editorProps: {
       attributes: {
@@ -137,8 +172,38 @@ const Tiptap = () => {
         class:
           "prose prose-sm sm:prose-base lg:prose-lg xl:prose-1xl m-5 focus:outline-none min-height: 70px",
       },
+      handlePaste(view, event) {
+        const items = event.clipboardData?.items;
+        if (items) {
+          for (const item of items) {
+            if (item.type.indexOf("image") !== -1) {
+              const file = item.getAsFile();
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  // Use editor instance directly
+                  editor
+                    .chain()
+                    .focus()
+                    .setImage({ src: reader.result as string })
+                    .run();
+                };
+                reader.readAsDataURL(file);
+                event.preventDefault();
+                return true;
+              }
+            }
+          }
+        }
+        return false;
+      },
     },
   });
+
+  React.useEffect(() => {
+    if (editor && setEditorInstance) setEditorInstance(editor);
+  }, [editor, setEditorInstance]);
+
   return <EditorContent editor={editor} />;
 };
 

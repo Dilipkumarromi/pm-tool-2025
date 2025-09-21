@@ -73,6 +73,7 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.646 0.222 41.116);
+    
   }
   
 }
@@ -150,7 +151,12 @@ body {
   -ms-text-size-adjust: none;
   -o-text-size-adjust: none;
   -webkit-text-size-adjust: 100%;
-  line-height: 1.5
+  line-height: 1.5;
+   --content-bg-color: lch(96.667% 0 282.863 / 1);
+    --header-color: lch(99% 0 282.863);
+    --header-height: 39.5px;
+    --focus-color: lch(53% 52.26 286.91);
+    --pointer: default;
 }
 h1,h2,h3,h4,h5,h6 {
   font-weight: var(--font-weight-medium);
