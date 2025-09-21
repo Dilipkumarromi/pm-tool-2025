@@ -18,7 +18,6 @@ function EditTextDetailsPage() {
           top: 0,
           background: "#fff",
           zIndex: 2,
-          // maxHeight:"300px"
         }}
       >
         <input
@@ -42,12 +41,7 @@ function EditTextDetailsPage() {
         />
       </div>
       <div style={{ position: "relative", height: "100%" }}>
-        <div
-          style={{
-            paddingBottom: "20px",
-            overflowY: "-moz-hidden-unscrollable",
-          }}
-        >
+        <div style={{ paddingBottom: "20px" }}>
           <Tiptap />
         </div>
         <div
@@ -65,7 +59,7 @@ function EditTextDetailsPage() {
 }
 const Tiptap = () => {
   const editor = useEditor({
-    immediatelyRender: true,
+    immediatelyRender: false,
     autofocus: true,
     content: "",
     extensions: [
@@ -75,7 +69,7 @@ const Tiptap = () => {
       Text,
       Image,
       FileHandler.configure({
-        allowedMimeTypes: ["*/*"], // Allow all file types
+        allowedMimeTypes: ["*/*"],
         onDrop: (currentEditor, files, pos) => {
           files.forEach((file) => {
             const fileReader = new FileReader();
@@ -120,21 +114,51 @@ const Tiptap = () => {
     ],
     onUpdate: ({ editor }) => {
       const dom = editor.view.dom;
-      if (editor.getText().trim().length > 0) {
-        dom.style.marginBottom = "0px";
-      } else {
-        dom.style.marginBottom = "0px";
-      }
+      dom.style.marginBottom = "0px";
     },
     editorProps: {
       attributes: {
         style:
           "overflow-y: auto; border: none; padding: 0px; margin: 0px; outline: none; max-height: 350px; margin-bottom: 70px;",
         class:
-          "prose prose-sm sm:prose-base lg:prose-lg xl:prose-1xl m-5 focus:outline-none; min-height: 70px; ",
+          "prose prose-sm sm:prose-base lg:prose-lg xl:prose-1xl m-5 focus:outline-none min-height: 70px",
       },
     },
   });
+
+  // Add clipboard image paste support
+  React.useEffect(() => {
+    if (!editor) return;
+    const dom = editor.view.dom;
+    const handlePaste = (event: ClipboardEvent) => {
+      const items = event.clipboardData?.items;
+      if (items) {
+        for (const item of items) {
+          if (item.type.indexOf("image") !== -1) {
+            const file = item.getAsFile();
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = () => {
+                editor
+                  .chain()
+                  .focus()
+                  .setImage({ src: reader.result as string })
+                  .run();
+              };
+              reader.readAsDataURL(file);
+              event.preventDefault();
+              return;
+            }
+          }
+        }
+      }
+    };
+    dom.addEventListener("paste", handlePaste);
+    return () => {
+      dom.removeEventListener("paste", handlePaste);
+    };
+  }, [editor]);
+
   return <EditorContent editor={editor} />;
 };
 

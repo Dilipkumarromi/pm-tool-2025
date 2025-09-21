@@ -17,7 +17,7 @@ export default function IssueDetailsPage() {
             {/* Centered Header Block */}
             <div className="mx-auto max-w-2xl"></div>
              <EditTextDetailsPage />
-             <p>for testing</p>
+            
           </main>
           {/* Sidebar */}
           <div style={{ width: "20%" }}>
