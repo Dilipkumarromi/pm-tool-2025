@@ -91,3 +91,16 @@
   height: 0;
   pointer-events: none;
 }
+/* modelStyle.css */
+
+/* Style links inside the Tiptap editor */
+.prose a {
+  color: #1d4ed8; /* Tailwind blue-700 or change to any color */
+  text-decoration: underline;
+}
+
+/* Optional: On hover */
+.prose a:hover {
+  color: #2563eb; /* Tailwind blue-600 */
+  text-decoration: underline;
+}

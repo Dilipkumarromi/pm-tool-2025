@@ -5,36 +5,111 @@ import Placeholder from "@tiptap/extension-placeholder";
 import Document from "@tiptap/extension-document";
 import FileHandler from "@tiptap/extension-file-handler";
 import Heading from "@tiptap/extension-heading";
-import Image from "@tiptap/extension-image";
 import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 import "../modelStyle.css";
+
+// ✅ Extended Image with width/height and delete button
+import { Image as TiptapImage } from "@tiptap/extension-image";
+
+const CustomImage = TiptapImage.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      width: {
+        default: null,
+        renderHTML: attributes => {
+          return attributes.width ? { width: attributes.width } : {};
+        },
+      },
+      height: {
+        default: null,
+        renderHTML: attributes => {
+          return attributes.height ? { height: attributes.height } : {};
+        },
+      },
+    };
+  },
+
+  addNodeView() {
+    return ({ node, getPos, editor }) => {
+      const container = document.createElement("div");
+      container.style.position = "relative";
+      container.style.display = "inline-block";
+
+      const img = document.createElement("img");
+      img.src = node.attrs.src;
+      if (node.attrs.width) img.style.width = `${node.attrs.width}px`;
+      if (node.attrs.height) img.style.height = `${node.attrs.height}px`;
+      img.style.display = "block";
+      img.style.maxWidth = "100%";
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.innerText = "×";
+      deleteBtn.setAttribute("type", "button");
+      deleteBtn.style.position = "absolute";
+      deleteBtn.style.top = "4px";
+      deleteBtn.style.right = "4px";
+      deleteBtn.style.background = "rgba(0,0,0,0.6)";
+      deleteBtn.style.color = "white";
+      deleteBtn.style.border = "none";
+      deleteBtn.style.borderRadius = "50%";
+      deleteBtn.style.width = "24px";
+      deleteBtn.style.height = "24px";
+      deleteBtn.style.cursor = "pointer";
+      deleteBtn.style.fontSize = "16px";
+      deleteBtn.style.lineHeight = "20px";
+
+      deleteBtn.addEventListener("click", () => {
+        const pos = getPos();
+        if (typeof pos === "number") {
+          editor.chain().deleteRange({ from: pos, to: pos + node.nodeSize }).run();
+        }
+      });
+
+      container.appendChild(img);
+      container.appendChild(deleteBtn);
+
+      return {
+        dom: container,
+        contentDOM: null,
+      };
+    };
+  },
+});
 
 function EditText() {
   const editorRef = React.useRef<HTMLDivElement>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  // Handler for image upload button
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files[0]) {
       const file = files[0];
       const reader = new FileReader();
       reader.onload = () => {
-        if (editorRef.current) {
-          const contentEditable = editorRef.current.querySelector('[contenteditable="true"]');
-          if (contentEditable) {
-            // Use Tiptap's editor instance to insert image
-            const editorInstance = (contentEditable as any).editor;
-            if (editorInstance) {
-              editorInstance
-                .chain()
-                .focus()
-                .setImage({ src: reader.result as string })
-                .run();
+        const result = reader.result as string;
+        const img = new Image();
+        img.onload = () => {
+          if (editorRef.current) {
+            const contentEditable = editorRef.current.querySelector('[contenteditable="true"]');
+            if (contentEditable) {
+              const editorInstance = (contentEditable as any).editor;
+              if (editorInstance) {
+                editorInstance
+                  .chain()
+                  .focus()
+                  .setImage({
+                    src: result,
+                    width: img.naturalWidth,
+                    height: img.naturalHeight,
+                  })
+                  .run();
+              }
             }
           }
-        }
+        };
+        img.src = result;
       };
       reader.readAsDataURL(file);
     }
@@ -70,18 +145,11 @@ function EditText() {
             }
           }}
         />
-        {/* Image upload button */}
-        <button
-          type="button"
-          style={{ marginLeft: "10px", padding: "6px 12px" }}
-          onClick={() => fileInputRef.current?.click()}
-        >
-          Upload Image
-        </button>
+       
         <input
           type="file"
           accept="image/*"
-          ref={fileInputRef}
+    
           style={{ display: "none" }}
           onChange={handleImageUpload}
         />
@@ -112,7 +180,7 @@ function EditText() {
 
 const Tiptap = ({ setEditorInstance }) => {
   const editor = useEditor({
-    immediatelyRender: false, // Fix SSR warning
+    immediatelyRender: false,
     autofocus: true,
     content: "",
     extensions: [
@@ -120,39 +188,57 @@ const Tiptap = ({ setEditorInstance }) => {
       Heading,
       Paragraph,
       Text,
-      Image,
+      CustomImage,
       FileHandler.configure({
-        allowedMimeTypes: ["*/*"], // Allow all file types
+        allowedMimeTypes: ["*/*"],
         onDrop: (currentEditor, files, pos) => {
           files.forEach((file) => {
             const fileReader = new FileReader();
-            fileReader.readAsDataURL(file);
             fileReader.onload = () => {
-              currentEditor
-                .chain()
-                .insertContentAt(pos, {
-                  type: "image",
-                  attrs: { src: fileReader.result },
-                })
-                .focus()
-                .run();
+              const result = fileReader.result as string;
+              const img = new Image();
+              img.onload = () => {
+                currentEditor
+                  .chain()
+                  .insertContentAt(pos, {
+                    type: "image",
+                    attrs: {
+                      src: result,
+                      width: img.naturalWidth,
+                      height: img.naturalHeight,
+                    },
+                  })
+                  .focus()
+                  .run();
+              };
+              img.src = result;
             };
+            fileReader.readAsDataURL(file);
           });
         },
         onPaste: (currentEditor, files, htmlContent) => {
           files.forEach((file) => {
             const fileReader = new FileReader();
-            fileReader.readAsDataURL(file);
             fileReader.onload = () => {
-              currentEditor
-                .chain()
-                .insertContentAt(currentEditor.state.selection.anchor, {
-                  type: "image",
-                  attrs: { src: fileReader.result },
-                })
-                .focus()
-                .run();
+              const result = fileReader.result as string;
+              const img = new Image();
+              img.onload = () => {
+                currentEditor
+                  .chain()
+                  .insertContentAt(currentEditor.state.selection.anchor, {
+                    type: "image",
+                    attrs: {
+                      src: result,
+                      width: img.naturalWidth,
+                      height: img.naturalHeight,
+                    },
+                  })
+                  .focus()
+                  .run();
+              };
+              img.src = result;
             };
+            fileReader.readAsDataURL(file);
           });
         },
       }),
@@ -181,12 +267,20 @@ const Tiptap = ({ setEditorInstance }) => {
               if (file) {
                 const reader = new FileReader();
                 reader.onload = () => {
-                  // Use editor instance directly
-                  editor
-                    .chain()
-                    .focus()
-                    .setImage({ src: reader.result as string })
-                    .run();
+                  const result = reader.result as string;
+                  const img = new Image();
+                  img.onload = () => {
+                    editor
+                      .chain()
+                      .focus()
+                      .setImage({
+                        src: result,
+                        width: img.naturalWidth,
+                        height: img.naturalHeight,
+                      })
+                      .run();
+                  };
+                  img.src = result;
                 };
                 reader.readAsDataURL(file);
                 event.preventDefault();
