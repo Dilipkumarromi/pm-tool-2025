@@ -8,7 +8,11 @@ import Heading from "@tiptap/extension-heading";
 import Image from "@tiptap/extension-image";
 import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
+import BulletList from "@tiptap/extension-bullet-list";
+import ListItem from "@tiptap/extension-list-item"; // ✅ Correct import for list items
+import OrderedList from "@tiptap/extension-ordered-list";
 import "../modelStyle.css";
+
 function EditTextDetailsPage() {
   return (
     <>
@@ -34,8 +38,7 @@ function EditTextDetailsPage() {
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              // Assuming that the Tiptap editor instance is globally accessible
-              // working like tab
+              // Future: trigger tab-like behavior
             }
           }}
         />
@@ -57,6 +60,7 @@ function EditTextDetailsPage() {
     </>
   );
 }
+
 const Tiptap = () => {
   const editor = useEditor({
     immediatelyRender: false,
@@ -68,6 +72,9 @@ const Tiptap = () => {
       Paragraph,
       Text,
       Image,
+      OrderedList, // ✅ Added for ordered list support
+      BulletList, // ✅ Added for bullet list support
+      ListItem,   // ✅ Added for bullet list support
       FileHandler.configure({
         allowedMimeTypes: ["*/*"],
         onDrop: (currentEditor, files, pos) => {
@@ -130,7 +137,8 @@ const Tiptap = () => {
   React.useEffect(() => {
     if (!editor) return;
     const dom = editor.view.dom;
-    const handlePaste = (event: ClipboardEvent) => {
+
+    const handlePaste = (event) => {
       const items = event.clipboardData?.items;
       if (items) {
         for (const item of items) {
@@ -142,7 +150,7 @@ const Tiptap = () => {
                 editor
                   .chain()
                   .focus()
-                  .setImage({ src: reader.result as string })
+                  .setImage({ src: reader.result })
                   .run();
               };
               reader.readAsDataURL(file);
@@ -153,6 +161,7 @@ const Tiptap = () => {
         }
       }
     };
+
     dom.addEventListener("paste", handlePaste);
     return () => {
       dom.removeEventListener("paste", handlePaste);
