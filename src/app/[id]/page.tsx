@@ -161,7 +161,7 @@ export default function IssueDetailsPage() {
                   Activity
                 </h2>
 
-                <div className="relative border-l-2 border-gray-200 ml-4 space-y-1 mt-4">
+                <div className="relative border-l-2 border-gray-200 ml-4 space-y-4 mt-4">
                   {activities.map((item) => (
                     <div key={item.id} className="flex items-start relative">
                       {/* Timeline Dot */}
@@ -181,12 +181,13 @@ export default function IssueDetailsPage() {
                               • {item.label}
                             </span>
                           )}
-                        </div>
-                        {item.time && (
-                          <div className="text-xs text-gray-400 mt-1">
+                          {item.time && (
+                          <span className="text-sm text-black-400 ">
                             {item.time}
-                          </div>
+                          </span>
                         )}
+                        </div>
+                        
                         {item.comment && (
                           <div className="border rounded-lg p-3 mt-2 bg-gray-50">
                             <p className="text-sm text-gray-800">
