@@ -1026,6 +1026,39 @@ code:not(pre code) {
 }
 
 
+/* Ensure ordered list markers are visible inside the editor (and prose) */
+.prose ol,
+.editor-content ol,
+.tiptap-editor ol {
+  list-style-position: outside;
+  padding-left: 1.4rem; /* adjust spacing */
+  margin: 0 0 1rem 0;
+  list-style-type: decimal;
+}
+
+/* If your li was set to flex, force it back to list-item so ::marker renders */
+.prose ol li,
+.editor-content ol li,
+.tiptap-editor ol li {
+  display: list-item !important;
+  align-items: initial !important;
+}
+
+/* Show marker color and weight */
+.prose ol li::marker,
+.editor-content ol li::marker,
+.tiptap-editor ol li::marker {
+  color: inherit;
+  font-weight: 500;
+}
+
+/* Support alphabetical ordered lists via data-list-style attribute */
+ol[data-list-style="alpha"] { list-style-type: lower-alpha; }
+ol[data-list-style="upper-alpha"] { list-style-type: upper-alpha; }
+
+/* Fallback for custom list wrappers */
+[contenteditable] ol { list-style-position: outside; padding-left: 1.4rem; }
+
 /* Style the scrollbar track */
 ::-webkit-scrollbar {
   width: 8px;             /* Vertical scrollbar width */

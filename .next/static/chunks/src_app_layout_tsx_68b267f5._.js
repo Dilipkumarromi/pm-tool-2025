@@ -11,7 +11,7 @@
   "static/chunks/node_modules_@tiptap_core_dist_fd9f07fc._.js",
   "static/chunks/node_modules_@radix-ui_9958b161._.js",
   "static/chunks/node_modules_@floating-ui_9ec1fa39._.js",
-  "static/chunks/node_modules_@tiptap_ca440389._.js",
+  "static/chunks/node_modules_@tiptap_3a62b468._.js",
   "static/chunks/node_modules_7fbe3622._.js"
 ],
     source: "dynamic"

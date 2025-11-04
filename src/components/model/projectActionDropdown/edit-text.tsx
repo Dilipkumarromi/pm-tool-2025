@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -9,6 +10,12 @@ import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 import "../modelStyle.css";
 
+// add these imports for list support
+import OrderedList from "@tiptap/extension-ordered-list";
+import BulletList from "@tiptap/extension-bullet-list";
+import ListItem from "@tiptap/extension-list-item";
+import { TextStyleKit } from '@tiptap/extension-text-style'
+const extensions = [TextStyleKit, StarterKit]
 // ✅ Extended Image with width/height and delete button
 import { Image as TiptapImage } from "@tiptap/extension-image";
 
@@ -78,6 +85,21 @@ const CustomImage = TiptapImage.extend({
   },
 });
 
+// extend ordered list to carry a listStyle attribute (renders as data-list-style)
+const OrderedListExtended = OrderedList.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      listStyle: {
+        default: null,
+        renderHTML: attrs => {
+          return attrs.listStyle ? { "data-list-style": attrs.listStyle } : {};
+        },
+      },
+    };
+  },
+});
+
 function EditText() {
   const editorRef = React.useRef<HTMLDivElement>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -94,6 +116,7 @@ function EditText() {
           if (editorRef.current) {
             const contentEditable = editorRef.current.querySelector('[contenteditable="true"]');
             if (contentEditable) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const editorInstance = (contentEditable as any).editor;
               if (editorInstance) {
                 editorInstance
@@ -119,7 +142,6 @@ function EditText() {
     <>
       <div
         style={{
-          position: "sticky",
           top: 0,
           zIndex: 2,
         }}
@@ -154,7 +176,7 @@ function EditText() {
           onChange={handleImageUpload}
         />
       </div>
-      <div style={{ position: "relative", height: "100%" }}>
+      <div style={{ position: "relative"}}>
         <div
           ref={editorRef}
           style={{
@@ -162,7 +184,7 @@ function EditText() {
             overflowY: "hidden",
           }}
         >
-          <Tiptap />
+          <Tiptap setEditorInstance={undefined} />
         </div>
         <div
           style={{
@@ -189,6 +211,7 @@ const Tiptap = ({ setEditorInstance }) => {
       Paragraph,
       Text,
       CustomImage,
+      // keep FileHandler as-is
       FileHandler.configure({
         allowedMimeTypes: ["*/*"],
         onDrop: (currentEditor, files, pos) => {
@@ -242,7 +265,15 @@ const Tiptap = ({ setEditorInstance }) => {
           });
         },
       }),
-      StarterKit,
+      // Disable StarterKit's built-in list nodes and register our explicit list extensions
+      BulletList,
+      ListItem,
+      OrderedListExtended,
+      StarterKit.configure({
+        orderedList: false,
+        bulletList: false,
+        listItem: false,
+      }),
       Placeholder.configure({
         placeholder: "Add description…",
       }),
